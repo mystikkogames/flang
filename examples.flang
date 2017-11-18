@@ -1,0 +1,61 @@
+# flang - a functional language
+# - Examples of flang language.
+# language: flang
+# version: 0.7
+# author: mystikkogames
+# email: mystikkogames@protonmail.com
+
+( function :yourfunc ( $a ) :
+    ( $a ! )
+    ( "and this goes back!" return )
+)
+
+( function :one_million_primes (  ) :
+    ( $i 0 = )
+	( loop ( $i 1000000 < ) : 
+    	( $i 1 + ". " *join $i *prime_nth *join ! )
+    	( $i $i 1 + = )
+    )
+)
+
+# results on my computer
+# Hello world!
+# -6.571430
+# mystikkogames
+# {'author':'me instead!','email':'mystikkogames@protonmail.com','length':'3'}
+# {'values' : ['040-123456'], 'length': 1}
+# {'values' : [], 'length': 0}
+# 2
+# 1
+# 7927
+# 1
+# this goes to :yourfunc!
+# and this goes back!
+# remothisemptyspace
+# 15210.288900
+# 350.966431
+# b
+# abcdef
+( function :main ( ) :
+    ( "Hello world!" ! )    
+    # same as but much easier to understand ! -> 3 * 3 / (3 * 2.1) + 2 - 10
+    ( 3 3 2.1 * / 3 * 2 + 10 - ! ) 
+    ( ".author" "{'author': 'mystikkogames', 'email': 'mystikkogames@protonmail.com', 'length' : '3' }" *json_find ! )
+    ( ".author" "me instead!" "{'author': 'mystikkogames', 'email': 'mystikkogames@protonmail.com', 'length' : '3' }" *json_replace ! )
+    ( "sdf 040-1234567 dfdsf" "/[0-9]{3}.[0-9]{6}/" *regex_match ! )
+    ( "sdf asd sd dfdsf" "/[0-9]{3}.[0-9]{6}/" *regex_match ! )
+    ( 1 2 *max ! )
+    ( 1 2 *min ! )
+    ( 1000 *prime_nth ! ) 
+    ( 7919 *is_prime ! )
+    ( "this goes to :yourfunc!" :yourfunc ! )
+    ( " re m o th is empt y space " *remove_whitespace ! )
+    ( 123.33 *pow2 ! )
+    ( 123123.1 *sqrt ! )
+    ( "abcdeg" 1 *char_at ! )
+    ( "abc" "def" *join ! )
+    #( *print_limits )
+    #( *print_id )
+    #( :one_million_primes )    
+)
+
