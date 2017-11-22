@@ -1,0 +1,26 @@
+# flang - a functional language
+#  - Unit tests for flang-language
+#  - flang is designed to solve real world problems.
+#  - This document works as a style guide for flang as well.
+#  - See README more about flang and its design philosophy
+# language: flang ( v. 0.81 )
+# author: mystikkogames ( mystikkogames@protonmail.com )
+
+# flang unit tests #  0.012s
+( function :main ( ) :
+    ( *clock_start )
+    # POSITIVE
+    ( "sdf 012dfdsf" "/[0-9]{3}/" *regex_match *assert )
+    ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" *regex_match *assert )
+    ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match *assert )
+    ( "123.12" *is_number *assert )
+    ( "-0.12" *is_number *assert )
+    ( 10000 *prime_nth 104743 == *assert )
+    # NEGATIVE
+    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match not *assert )
+    ( "sdf 012dfdsf" "/[0-9]{4}/" *regex_match not *assert )
+    ( "-as0.12" *is_number not *assert )
+    ( "-0.1ad2" *is_number not *assert )
+    ( "flang unit tests #  "*clock_diff 3 *precision *join "s" *join ! )
+)
+

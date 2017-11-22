@@ -1,6 +1,7 @@
 # flang - a functional language
 #  - Functions are flang's first class citizens. 
-#  - This is why I have 2 different function types :yourfunction for users and *max for flang. No name collisions!
+#  - This is why I have 2 different function types :yourfunction 
+#      for users and *max for flang. No name collisions!
 #  - Variables are $myvar. The $-sign makes it easy to see variables. No types everything is a string.
 #  - Types: you can sum ( 12.2 11 + ) but not ( 12.3 "lorem ipsum" + ) use *join instead .
 #  - Currently I'm in the process of simplifying the syntax and speeding up flang.
@@ -8,7 +9,8 @@
 #  - Give flang execute permissions: chmod +x ./flang
 #  - Run command line (x: means execute): ./flang x:'(300 $var =)($var *prime_nth !)'
 #  - Run file (f: means file): ./flang f:'examples.flang'
-#  - regex lib is really bad atm. Only able to perform simplest things. Since it is very important I'm working on it.
+#  - regex lib is really bad atm. Only able to perform simplest things. 
+#      Since it is very important I'm working on it.
 #  - json lib is stable. Json lives in strings ie. "{'name': 'yourname'}".
 #  - flang stores everything in strings and only resolves types in runtime.
 #  - flang uses double for floats and long for integers.
@@ -35,11 +37,15 @@
 #    - Made code easier to read/write ie. ( $i ++ ) and faster too in benchmarks!
 #    - ( *exit ) added. Useful for debugging. Quits flang immediately!
 #    - ( *assert ) added
-#    - ( if ( $if ) : ( statement ) ( $if ! ) elif ( $elif ) : ( statement ) ( $elif ! ) else : ( statement ) ( $else ! ) )
-#        instead of clumsy ( if ( ( $if ) : ( statement ) ( $if ! ) ) elif ( ( statement ) ( $elif ) : ( $elif !) ) else : ( ( statement ) ( $else ! ) ) )
+#    - ( if ( $if ) : ( statement ) ( $if ! ) elif ( $elif ) : ( statement ...
+#        instead of clumsy ( if ( ( $if ) : ( statement ) ( $if ! ) ) elif ( ( statement ...
 #    - ( $i ++ ) instead of clumsy ( $i $i 1 + = )
 #    - ( $i -- ) instead of clumsy ( $i $i 1 - = )
 #    - ( $i 2.3 += ) instead of clumsy ( $i $i 2.3 + = )
 #    - ( $i 2.3 -= ) instead of clumsy ( $i $i 2.3 - = )
 #    - ( 1.23 1 *precision ! ) -> 1.2
 #    - ( *clock_start ) and ( *clock_diff ) you can benchmark your code very easily!
+#  - 0.81
+#    - Regex is now well written and easy to add features in future
+#    - A few bugs solved + speedups
+#    - unit_tests.flang added

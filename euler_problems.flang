@@ -1,9 +1,11 @@
 # flang - a functional language
 #  - First 12 euler problems ( https://projecteuler.net/archives ) solved in flang language to show its features
 #  - flang is designed to solve real world problems.
+#  - These are also unit tests for flang
+#    Correct results are expected each and every time!
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
-# language: flang ( v. 0.8 )
+# language: flang ( v. 0.81 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 ( function :euler_1 ( ) :
@@ -95,7 +97,7 @@
 	( $squares_of_sum 0 = )
     ( $i 1 = )
     ( loop ( $i 101 < ) :
-	    ( $sum_of_squares $i $i * $sum_of_squares + = )
+	    ( $sum_of_squares $i $i * += )
 	    ( $squares_of_sum $i += )
         ( $i ++ )
     )
