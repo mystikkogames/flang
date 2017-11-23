@@ -11,10 +11,9 @@
 #  - Give flang execute permissions: chmod +x ./flang
 #  - Run command line (x: means execute): ./flang x:'(300 $var =)($var *prime_nth !)'
 #  - Run file (f: means file): ./flang f:'examples.flang'
-#  - regex lib is really bad atm. Only able to perform simplest things. 
-#      Since it is very important I'm working on it.
+#  - regex lib is pretty stable.
 #  - json lib is stable. Json lives in strings ie. "{'name': 'yourname'}".
-#  - "0# Only "0" is false in flang. Everything is true
+#  - euler_problems.flang and unit_tests.flang works as a style guide for or flang
 #  - flang stores everything in strings and only resolves types in runtime.
 #  - flang uses double for floats and long for integers.
 #  - flang uses dynamic memory allocation for most parts.
@@ -22,8 +21,8 @@
 #      It's that simple!
 #  - flang is an interpreted language like Ruby or Python.
 #  - flang is designed to be small (50kb), fast and simple to write.
-#  - flang is not designed just to solve euler problems. 
-#      But to solve people's real world problems!
+#  - flang is designed real world problems! 
+#      Nobody cares about inheritance or tamplate typedef nonsense.
 #  - flang is written in C-language.
 #  - flang is compiled in Linux ( gcc -Wall -O2 -s flang-0.8c -o flang ). 
 #      But it doesn't use anything Linux specific! flang works on any OS!
