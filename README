@@ -2,22 +2,28 @@
 #  - Functions are flang's first class citizens. 
 #  - This is why I have 2 different function types :yourfunction 
 #      for users and *max for flang. No name collisions!
-#  - Variables are $myvar. The $-sign makes it easy to see variables. No types everything is a string.
+#  - Variables are $myvar. The $-sign makes it easy to see variables. 
+#      No types everything is a string.
 #  - Types: you can sum ( 12.2 11 + ) but not ( 12.3 "lorem ipsum" + ) use *join instead .
 #  - Currently I'm in the process of simplifying the syntax and speeding up flang.
-#  - The worst thing flang can do is to crash and forgot to free memory. Which is totally safe in Linux.
+#  - The worst thing flang can do is to crash and forgot to free memory. 
+#      Which is totally safe in Linux.
 #  - Give flang execute permissions: chmod +x ./flang
 #  - Run command line (x: means execute): ./flang x:'(300 $var =)($var *prime_nth !)'
 #  - Run file (f: means file): ./flang f:'examples.flang'
 #  - regex lib is really bad atm. Only able to perform simplest things. 
 #      Since it is very important I'm working on it.
 #  - json lib is stable. Json lives in strings ie. "{'name': 'yourname'}".
+#  - "0# Only "0" is false in flang. Everything is true
 #  - flang stores everything in strings and only resolves types in runtime.
 #  - flang uses double for floats and long for integers.
 #  - flang uses dynamic memory allocation for most parts.
+#  - flang has very simple booleans: "0" is false. Everything else is true.
+#      It's that simple!
 #  - flang is an interpreted language like Ruby or Python.
 #  - flang is designed to be small (50kb), fast and simple to write.
-#  - flang is not designed just to solve euler problems. But to solve people's real world problems!
+#  - flang is not designed just to solve euler problems. 
+#      But to solve people's real world problems!
 #  - flang is written in C-language.
 #  - flang is compiled in Linux ( gcc -Wall -O2 -s flang-0.8c -o flang ). 
 #      But it doesn't use anything Linux specific! flang works on any OS!
@@ -49,3 +55,9 @@
 #    - Regex is now well written and easy to add features in future
 #    - A few bugs solved + speedups
 #    - unit_tests.flang added
+#  - 0.82
+#    - ( *read_file ) Very easy and safe to read file. Can read any size of file.
+#    - json improved. See unit tests
+#    - Solved 1 more euler in flang - language
+#    - Fixed a couple of bugs
+#    - data.json holds data for euler problems and others in json format
