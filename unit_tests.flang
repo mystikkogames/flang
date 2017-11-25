@@ -1,35 +1,101 @@
 # flang - a functional language
-#  - Unit tests for flang-language
+#  - Unit tests for flang - language
 #  - flang is designed to solve real world problems.
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
 # language: flang ( v. 0.83 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
-# flang unit tests #  0.012s
+# flang unit tests # 0.012s
 ( function :main ( ) :
+
     ( *clock_start )
+    
     # POSITIVE
+    
     ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" *regex_match )
+    
     ( "sdf 012dfdsf" "/[0-9]{3}/" *regex_match *assert )
+    
     ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" *regex_match *assert )
+    
     ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match *assert )
+    
     ( ".name" "{'name': 'mystikkogames'}" *json_read "mystikkogames" == *assert )
+    
     ( ".name.value[3]" "{'name': {'value': ['1','2','3','mystikkogames']}" *json_read "mystikkogames" == *assert )
+    
     ( $var ".name" "smt" "{'name': 'mystikkogames'}" *json_write = ) 
-        ( ".name" $var *json_read "smt" == *assert )
+    ( ".name" $var *json_read "smt" == *assert )
+    
     ( "123.12" *is_number *assert )
+    
     ( "-0.12" *is_number *assert )
+    
     ( 10000 *prime_nth 104743 == *assert )
+    
     ( "1" *assert )
+    
     ( "..." *assert )
+    
     ( "0.0" *assert )
+        
+   	( $var 42 = )
+   	( if ( 1 ) : ( $var 142 = ) )
+    ( $var 142 == *assert )
+   	
+   	( $var 42 = )
+   	( if ( 0 ) : ( $var 0 = ) else : ( $var 111 = ) )
+    ( $var 111 == *assert )
+    
+   	( $var 42 = )
+   	( if ( 0 ) : ( $var 0 = ) elif ( 1 ) : ( $var 19 = ) else : ( $var 111 = ) )
+    ( $var 19 == *assert )
+    
+   	( $var 100 = )
+   	( $var 10 -= )
+    ( $var 90 == *assert )
+    
+   	( $var 100 = )
+   	( $var 10 += )
+    ( $var 110 == *assert )
+    
+   	( 100 *resize_salong )
+   	( *reset_salong )
+   	( 0 21 *set_salong )
+   	( 1 42 *set_salong )
+   	( 2 4431 *set_salong )
+    ( 1 *get_salong 42 == *assert )
+    
+   	( 100 *resize_sadouble )
+   	( *reset_sadouble )
+   	( 0 21.2 *set_sadouble )
+   	( 1 42.12 *set_sadouble )
+   	( 2 44.31 *set_sadouble )
+    ( 1 *get_sadouble 2 *precision 42.12 == *assert )
+   	
+    ( $a *array_new = )
+    ( $a $a "12" *array_push = )
+    ( $a $a "12]6%3" *array_push = )
+    ( $a $a "1sdf2" *array_push = )
+    ( $a $a "42" *array_push = )
+    ( $a $a "12" *array_push = )
+    ( $a *array_length 5 == *assert )
+    ( $a 3 *array_get 42 == *assert )
+    
     # NEGATIVE
-    ( "0" not *assert ) # Only "0" is false in flang. Everything else is true!
-    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match not *assert )
-    ( "sdf 012dfdsf" "/[0-9]{4}/" *regex_match not *assert )
-    ( "-as0.12" *is_number not *assert )
-    ( "-0.1ad2" *is_number not *assert )
-    ( "flang unit tests #  "*clock_diff 3 *precision *join "s" *join ! )
+    
+    # Only "0" is false in flang. Everything else is true!
+    ( "0" ! *assert ) 
+    
+    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match ! *assert )
+    
+    ( "sdf 012dfdsf" "/[0-9]{4}/" *regex_match ! *assert )
+    
+    ( "-as0.12" *is_number ! *assert )
+    
+    ( "-0.1ad2" *is_number ! *assert )
+    
+    ( "flang unit tests # "*clock_diff 3 *precision *join "s" *join *print )    
 )
 

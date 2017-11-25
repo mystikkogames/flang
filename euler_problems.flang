@@ -1,8 +1,8 @@
 # flang - a functional language
-#  - Euler problems ( https://projecteuler.net/archives ) solved in flang language to show its features
-#  - flang is designed to solve real world problems.
+#  - Euler problems ( https://projecteuler.net/archives ) solved in 
+#      flang - language to show its features
 #  - These are also unit tests for flang
-#    Correct results are expected each and every time!
+#  - Correct results are expected each and every time!
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
 # language: flang ( v. 0.83 )
@@ -57,7 +57,7 @@
 		( $start2 999 = )
         ( loop ( $start2 100 > ) :
             ( $res $start2 $start1 * = )
-            ( if ( $res $largest < ) : ( break_loop ) )
+            ( if ( $res $largest < ) : ( break ) )
             ( if ( $res 0 *char_at $res 5 *char_at == 
                 $res 1 *char_at $res 4 *char_at == and 
                 $res 2 *char_at $res 3 *char_at == and ) :
@@ -80,7 +80,7 @@
         ( loop ( $i 22 < ) :
             ( if  ( $n $i % 0 != ) : 
                 ( $remainder 1 = )
-                ( break_loop )
+                ( break )
             )
             ( $i ++ )
         )
@@ -143,7 +143,7 @@
         )
         ( $a ++ )
     )
-    ( "Shouldn't se me!" ! )
+    ( "Shouldn't se me!" *print )
 )
 
 # in brute force we trust!
@@ -281,7 +281,42 @@
     ( $answer )  
 )
 
-# 13 eulers # 17.506s
+# This is pretty much the most optimum algorithm I came up with.
+# Pretty slow but that's how the cookie crambles
+( function :euler_14 ( ) :
+    ( $best_i 0 = )
+    ( $largest 0 = )
+    ( $i 0 = )
+   	# You could use flang's general array but 
+   	# this needs speed so I use the shared array
+   	# salong means (s)hared (a)rray of (long)s
+   	( 1000000 *resize_salong )
+   	( *reset_salong )
+   	( 1 0 *set_salong )
+    ( loop ( $i 1000000 < ) :
+        ( $number $i = )
+        ( $n 0 = )
+        ( loop ( $number 1 > $number $i >= and ) :
+        	( if ( $number 2 % 0 == ) : 
+        		( $number $number 2 / *int = ) 
+        	else : 
+        		( $number $number 3 * 1 + = ) 
+        	)
+        	( $n ++ )
+        )
+        ( $n $number *get_salong += )
+        ( $i $n *set_salong )
+       	( if ( $n $largest > ) : 
+       		( $largest $n = ) 
+       		( $best_i $i = ) 
+       	)
+        ( $i ++ )
+    )
+    ( *free_salong ) # actually just shrinks the size...
+    ( $best_i )  
+)
+
+# Euler unit tests # 76.767s
 ( function :main ( ) :
     ( *clock_start )
     ( :euler_1 233168 == *assert )
@@ -297,6 +332,7 @@
     ( :euler_11 70600674 == *assert )
     ( :euler_12 76576500 == *assert ) 
     ( :euler_13 5537376230 == *assert ) 
-    ( "13 eulers # " *clock_diff 3 *precision *join "s" *join ! )
+    ( :euler_14 837799 == *assert ) 
+    ( "Euler unit tests # " *clock_diff 3 *precision *join "s" *join *print )
 )
 

@@ -1,36 +1,36 @@
 # flang - a functional language
 #  - Examples of flang language
-# language: flang ( v. 0.82 )
+# language: flang ( v. 0.83 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 ( function :yourfunc ( $a ) :
-    ( $a ! )
+    ( $a *print )
     ( "and this goes back!" return )
 )
 
 ( function :one_million_primes (  ) :
     ( $i 0 = )
 	( loop ( $i 1000000 < ) : 
-    	( $i 1 + ". " *join $i *prime_nth *join ! )
+    	( $i 1 + ". " *join $i *prime_nth *join *print )
     	( $i $i 1 + = )
     )
 )
 ( function :main ( ) :
-    ( "Hello world!" ! )        
+    ( "Hello world!" *print )        
     ( *clock_start )
-    ( "100001th prime: " 100000 *prime_nth *join ! )
-    ( "# " *clock_diff 3 *precision *join "s" *join ! )    
+    ( "100001th prime: " 100000 *prime_nth *join *print )
+    ( "# " *clock_diff 3 *precision *join "s" *join *print )    
 	( $i 5 = )
 	( loop ( $i 2 > ) : 
-		( $i ! )	
+		( $i *print )	
 		( $i -- )	
 	)	
 	( if  ( 1 ) : 
-		( "if!" ! ) 
+		( "if!" *print ) 
 	elif ( 0 ) : 
-		( "elif!" ! ) 
+		( "elif!" *print ) 
 	 else : 
-		( "else!" ! )  
+		( "else!" *print )  
 	)	
     #( *exit )  
     # Showing how flang dynamically allocates memory
@@ -38,21 +38,21 @@
     ( $str "1" = )
     #( loop ( $i 100000 < ) : ( $str $str "12345678" *join = ) ( $i ++ ) )
     ( $a 1 = )  
-    ( $a ! ) 
+    ( $a *print ) 
     ( $a ++ )  
     ( $a 12.1 += )  
-    ( $a ! )
-    ( 3 3 2.1 * / 3 * 2 + 10 - ! ) # same as -> 3 * 3 / (3 * 2.1) + 2 - 10
-    ( 1 2 *max ! )
-    ( 1 2 *min ! )
-    ( 1000 *prime_nth ! ) 
-    ( 7919 *is_prime ! )
-    ( "this goes to :yourfunc!" :yourfunc ! )
-    ( " re m o th is empt y space " *remove_whitespace ! )
-    ( 123.33 *pow2 ! )
-    ( 123123.1 *sqrt ! )
-    ( "abcdeg" 1 *char_at ! )
-    ( "abc" "def" *join ! )  
+    ( $a *print )
+    ( 3 3 2.1 * / 3 * 2 + 10 - *print ) # same as -> 3 * 3 / (3 * 2.1) + 2 - 10
+    ( 1 2 *max *print )
+    ( 1 2 *min *print )
+    ( 1000 *prime_nth *print ) 
+    ( 7919 *is_prime *print )
+    ( "this goes to :yourfunc!" :yourfunc *print )
+    ( " re m o th is empt y space " *remove_whitespace *print )
+    ( 123.33 *pow2 *print )
+    ( 123123.1 *sqrt *print )
+    ( "abcdeg" 1 *char_at *print )
+    ( "abc" "def" *join *print )  
     #( *print_limits )
     #( *print_id )
     #( :one_million_primes )    
