@@ -24,7 +24,7 @@
 #  - flang is designed to be small (around 100kb), fast and simple to write.
 #  - flang is designed real world problems! 
 #  - flang is written in C-language.
-#  - flang has lots of unittests to stress it to limits.
+#  - flang has lots of unittests to stress flang to its limits.
 #      To make sure flang works correct each and every time. No bullshit!
 #  - flang is compiled in Linux ( gcc -Wall -O2 -s flang-0.8c -o flang ). 
 #      But it doesn't use anything Linux specific! flang works on any OS!
@@ -73,3 +73,8 @@
 #    - break_loop -> break
 #    - ! -> not
 #    - *print means now print
+#  - 0.84
+#    - flang now supports recursive functions!
+#    - And globals too!
+#    - Added 1 more solved euler. Check for example about recursive and globals 
+#        support in flang.

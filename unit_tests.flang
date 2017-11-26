@@ -3,7 +3,7 @@
 #  - flang is designed to solve real world problems.
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
-# language: flang ( v. 0.83 )
+# language: flang ( v. 0.84 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 # flang unit tests # 0.012s
@@ -67,6 +67,9 @@
    	( 2 4431 *set_salong )
     ( 1 *get_salong 42 == *assert )
     
+   	( $$IAMGLOBAL 42 = )
+   	( $$IAMGLOBAL 42 == *assert )
+   	
    	( 100 *resize_sadouble )
    	( *reset_sadouble )
    	( 0 21.2 *set_sadouble )

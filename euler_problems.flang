@@ -5,7 +5,7 @@
 #  - Correct results are expected each and every time!
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
-# language: flang ( v. 0.83 )
+# language: flang ( v. 0.84 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 ( function :euler_1 ( ) :
@@ -316,6 +316,40 @@
     ( $best_i )  
 )
 
+( function :luke_the_grid_walker ( $x $y ) :
+	( if ( $x $$GRIDSIZE > $y $$GRIDSIZE > or ) : 
+		( 0 ) 
+		( return ) 
+	)	
+	# ie. "2x2" grid is actually 3 wide that's why we make x 1 longer!
+	( $pnt $y $$GRIDSIZE 1 + * $x + = )	
+	( $n $pnt *get_salong = )	
+	( if ( $n 0 > ) : ( $n ) ( return ) )        
+	( if ( $x $$GRIDSIZE == $y $$GRIDSIZE == and ) :
+		( 1 )
+		( return )
+	else : 
+		( $tmp1 $x 1 + $y :luke_the_grid_walker = ) 
+		( $tmp2 $x $y 1 + :luke_the_grid_walker = ) 		
+		( $res $tmp1 $tmp2 + = )		
+        ( $pnt $res *set_salong )        
+        ( $res )
+		( return )
+	)
+)
+
+# Propably useless to use globals here but 
+# you can use it to walk through general size of arrays
+# flang now supports recursive functions!
+( function :euler_15 ( ) :
+   	( $$GRIDSIZE 20 = )
+   	( 1000000 *resize_salong )
+   	( *reset_salong )   	
+   	( $result 0 0 :luke_the_grid_walker = )
+   	( *free_salong )
+   	( $result )
+)
+
 # Euler unit tests # 76.767s
 ( function :main ( ) :
     ( *clock_start )
@@ -333,6 +367,7 @@
     ( :euler_12 76576500 == *assert ) 
     ( :euler_13 5537376230 == *assert ) 
     ( :euler_14 837799 == *assert ) 
+    ( :euler_15 137846528820 == *assert )
     ( "Euler unit tests # " *clock_diff 3 *precision *join "s" *join *print )
 )
 
