@@ -3,7 +3,7 @@
 #  - flang is designed to solve real world problems.
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
-# language: flang ( v. 0.84 )
+# language: flang ( v. 0.85 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 # flang unit tests # 0.012s
@@ -25,7 +25,23 @@
     
     ( ".name.value[3]" "{'name': {'value': ['1','2','3','mystikkogames']}" *json_read "mystikkogames" == *assert )
     
+    ( $var *array_new = )
+    ( $var $var "12" *array_push = )
+    ( $var $var "345" *array_push = )
+    ( $var $var "6" *array_push = )
+    ( $var $var "7" *array_push = )
+    ( $var $var "89" *array_push = )
+    #( $var *array_length  *print )
+    ( $var *array_length 5 == *assert )
+    ( $var 1 *array_get "345" == *assert )
+    ( $var 0 *array_get "12" == *assert )
+    ( $var $var *array_pop = )
+    ( $var *array_length 4 == *assert )
+    ( $var $var *array_pop = )
+    ( $var *array_length 3 == *assert )
+    
     ( $var ".name" "smt" "{'name': 'mystikkogames'}" *json_write = ) 
+    
     ( ".name" $var *json_read "smt" == *assert )
     
     ( "123.12" *is_number *assert )

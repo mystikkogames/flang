@@ -5,7 +5,7 @@
 #  - Correct results are expected each and every time!
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
-# language: flang ( v. 0.84 )
+# language: flang ( v. 0.85 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 ( function :euler_1 ( ) :

@@ -1,6 +1,6 @@
 # flang - a functional language
 #  - Examples of flang language
-# language: flang ( v. 0.84 )
+# language: flang ( v. 0.85 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 ( function :yourfunc ( $a ) :

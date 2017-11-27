@@ -10,7 +10,7 @@
 #  - The worst thing flang can do is to crash and forgot to free memory. 
 #      Which is totally safe in Linux.
 #  - Give flang execute permissions: chmod +x ./flang
-#  - Run command line (x: means execute): ./flang x:'(300 $var =)($var *prime_nth !)'
+#  - Run command line (x: means execute): ./flang x:'( 300 $var = )( $var *prime_nth *print )'
 #  - Run file (f: means file): ./flang f:'examples.flang'
 #  - regex lib is pretty stable.
 #  - json lib is stable. Json lives in strings ie. "{'name': 'yourname'}".
@@ -78,3 +78,9 @@
 #    - And globals too!
 #    - Added 1 more solved euler. Check for example about recursive and globals 
 #        support in flang.
+#  - 0.85
+#    - Not so much new features. But under the hood I speedup flang a lot.
+#        Just cleaning and removing code resulted 15s save in unittests!
+#    - ( *array_pop ) added. It will remove the last element of the array. 
+#        Check for unitests for implementation!
+#    - Actually quite a lot of bugs
