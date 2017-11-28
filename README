@@ -3,11 +3,11 @@
 # - flang's design philosophy: 
 #  1. Small, simple and fast.
 #  2. Very fast to parse. That's why I chose postfix. It is really fast to parse.
-#   - In infix a compiler needs to work much harder. Results user to wait unnecessary!.
+#   - In infix a compiler needs to work much harder. Results user to wait unnecessarily!.
 #  3. Functional design.
-#   - 4 different functions. function, lambdas, :func and *func.
+#   - 4 different functions. function, lambda, :func and *func.
 #   - flang's function calls are very light.
-#    As current state is not saved anywhere! As in other laguages.
+#    As current state is not saved anywhere! Unlike in other languages.
 #  4. Stack based model of strings. 
 #   - It just makes the whole language simple and bug free thus fast!
 #  5. Only the most necessary bits will be included.
