@@ -3,17 +3,16 @@
 #  - flang is designed to solve real world problems.
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
-# language: flang ( v. 0.85 )
+# language: flang ( v. 0.86 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
-# flang unit tests # 0.012s
 ( function :main ( ) :
 
     ( *clock_start )
     
     # POSITIVE
     
-    ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" *regex_match )
+    ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" *regex_match *assert )
     
     ( "sdf 012dfdsf" "/[0-9]{3}/" *regex_match *assert )
     
@@ -31,7 +30,6 @@
     ( $var $var "6" *array_push = )
     ( $var $var "7" *array_push = )
     ( $var $var "89" *array_push = )
-    #( $var *array_length  *print )
     ( $var *array_length 5 == *assert )
     ( $var 1 *array_get "345" == *assert )
     ( $var 0 *array_get "12" == *assert )
@@ -41,8 +39,17 @@
     ( $var *array_length 3 == *assert )
     
     ( $var ".name" "smt" "{'name': 'mystikkogames'}" *json_write = ) 
-    
     ( ".name" $var *json_read "smt" == *assert )
+    
+    ( $multiply_by_2 ( lambda ( $num ) : ( $num 2 * ) ) = )
+    ( 7 :$multiply_by_2 14 == *assert )
+    ( 21 :$multiply_by_2 42 == *assert )
+    ( $var2 $multiply_by_2 = )
+    ( 21 :$var2 42 == *assert )
+
+    ( $cruncher ( lambda ( $func1 $func2 ) : ( $a :$func1 = ) ( $b :$func2 = ) ( if ( $a $b > ) : ( $a ) else : ( $b ) ) ) = )
+    # We can pass lambdas as arguments to functions!
+    ( ( lambda ( ) : ( 11 ) ) ( lambda ( ) : ( 42 ) ) :$cruncher 42 == *assert )
     
     ( "123.12" *is_number *assert )
     
@@ -64,6 +71,50 @@
    	( if ( 0 ) : ( $var 0 = ) else : ( $var 111 = ) )
     ( $var 111 == *assert )
     
+   	( $var 42 = )
+   	( $var 10 %= )
+   	( $var 2 == *assert )
+
+   	( $var 42 = )
+   	( $var 2 %= )
+   	( $var 0 == *assert )
+
+   	( $var 42 = )
+   	( $var 2 -= )
+   	( $var 40 == *assert )
+
+   	( $var 42 = )
+   	( $var 44 -= )
+   	( $var -2 == *assert )
+
+   	( $var 42 = )
+   	( $var 2 += )
+   	( $var 44 == *assert )
+
+   	( $var 42 = )
+   	( $var 2 /= )
+   	( $var *int 21 == *assert )
+
+   	( $var 42 = )
+   	( $var 42 /= )
+   	( $var *int 1 == *assert )
+
+   	( $var 42 = )
+   	( $var 2 *= )
+   	( $var 84 == *assert )
+
+   	( $var 42 = )
+   	( $var -2 *= )
+   	( $var -84 == *assert )
+
+   	( $var 42 = )
+   	( $var ++ )
+   	( $var 43 == *assert )
+
+   	( $var 42 = )
+   	( $var -- )
+   	( $var 41 == *assert )
+
    	( $var 42 = )
    	( if ( 0 ) : ( $var 0 = ) elif ( 1 ) : ( $var 19 = ) else : ( $var 111 = ) )
     ( $var 19 == *assert )
@@ -115,6 +166,7 @@
     
     ( "-0.1ad2" *is_number ! *assert )
     
+    # flang unit tests # 0.017s
     ( "flang unit tests # "*clock_diff 3 *precision *join "s" *join *print )    
 )
 

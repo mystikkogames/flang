@@ -1,86 +1,114 @@
 # flang - a functional language
-#  - Functions are flang's first class citizens. 
-#  - This is why I have 2 different function types :yourfunction 
-#      for users and *max for flang. No name collisions!
-#  - Variables are $myvar. The $-sign makes it easy to see variables. 
-#      No types everything is a string.
-#  - Types: you can sum ( 12.2 11 + ) 
-#      but not ( 12.3 "lorem ipsum" + ) use *join instead .
-#  - Currently I'm in the process of simplifying the syntax and speeding up flang.
-#  - The worst thing flang can do is to crash and forgot to free memory. 
-#      Which is totally safe in Linux.
-#  - Give flang execute permissions: chmod +x ./flang
-#  - Run command line (x: means execute): ./flang x:'( 300 $var = )( $var *prime_nth *print )'
-#  - Run file (f: means file): ./flang f:'examples.flang'
-#  - regex lib is pretty stable.
-#  - json lib is stable. Json lives in strings ie. "{'name': 'yourname'}".
-#  - euler_problems.flang and unit_tests.flang works as a style guide for or flang
+#
+# - flang's design philosophy: 
+#  1. Small and fast.
+#  2. Very fast to parse. That's why I chose postfix. It is really fast to parse.
+#   - In infix a compiler needs to work much harder. Results user to wait unnecessary!.
+#  3. Functional design.
+#   - 4 different functions. function, lambdas, :func and *func.
+#   - flangs function calls are very light. 
+#    As current state is not saved anywhere! As in other laguages.
+#  4. Stack based model of string. 
+#   - It just makes the whole language bug free thus fast!
+#  5. Only necessary bits will be included.
+#
+# - ( Very ) short guide
+#  - Variables: $myvar
+#  - Globals: $$myglobal
+#  - Globals: $$myglobal
+#  - Comments: #
+#  - Types: No types. Everything is a string!
+#  - Boolean: "0" is false. Everything else is true. It's that simple!
+#  - ++ / -- / += / -= / *= ... to make coding faster and bug free.
+#  ...
+#
+# - Random facts about flang
+#  - flang has regex lib ( pretty stable ) and json lib ( very stable ).
 #  - flang stores everything in strings and only resolves types in runtime.
 #  - flang uses double for floats and long for integers.
 #  - flang uses dynamic memory allocation for most parts.
-#  - flang has very simple booleans: "0" is false. Everything else is true.
-#      It's that simple!
 #  - flang is an interpreted language like Ruby or Python.
-#  - flang is designed to be small (around 100kb), fast and simple to write.
 #  - flang is designed real world problems! 
 #  - flang is written in C-language.
-#  - flang has lots of unittests to stress flang to its limits.
-#      To make sure flang works correct each and every time. No bullshit!
+#  - flang has tons of unittests to stress flang to its limits.
+#  - euler_problems.flang + unit_tests.flang = unit tests.
+#   To make sure flang works correct each and every time. No bullshit!
 #  - flang is compiled in Linux ( gcc -Wall -O2 -s flang-0.8c -o flang ). 
-#      But it doesn't use anything Linux specific! flang works on any OS!
-#  - flang is licenced for personal use. You own the binary on your computer not me!
-#  - flang is designed for all the people not just programming wizards!
-#  - ...
+#   But it doesn't use anything Linux specific! flang works on any OS!
+#  - flang project is all about flang language. 
+#   Rather than my C implementation of interpreter.
 #
-#  - Versions:
+# - Versions:
+#
 #  - 0.7 
-#    - Initial release. Pretty stable.
+#   - Initial release. Pretty stable.
+#
 #  - 0.8 
-#    - Huge update
-#    - Added benchmarks
-#    - Fixed bugs. 
-#    - Solved 1 more euler. 
-#    - Everybody should definitely update 0.7 -> 0.8
-#    - Made code easier to read/write ie. ( $i ++ ) and faster too in benchmarks!
-#    - ( *exit ) added. Useful for debugging. Quits flang immediately!
-#    - ( *assert ) added
-#    - ( if ( $if ) : ( statement ) ( $if ! ) elif ( $elif ) : ( statement ...
-#        instead of clumsy ( if ( ( $if ) : ( statement ) ( $if ! ) ) elif ( ( statement ...
-#    - ( $i ++ ) instead of clumsy ( $i $i 1 + = )
-#    - ( $i -- ) instead of clumsy ( $i $i 1 - = )
-#    - ( $i 2.3 += ) instead of clumsy ( $i $i 2.3 + = )
-#    - ( $i 2.3 -= ) instead of clumsy ( $i $i 2.3 - = )
-#    - ( 1.23 1 *precision ! ) -> 1.2
-#    - ( *clock_start ) and ( *clock_diff ) you can benchmark your code very easily!
+#   - Huge update
+#   - Added benchmarks
+#   - Fixed bugs. 
+#   - Solved 1 more euler. 
+#   - Everybody should definitely update 0.7 -> 0.8
+#   - Made code easier to read/write ie. ( $i ++ ) and faster too in benchmarks!
+#   - ( *exit ) added. Useful for debugging. Quits flang immediately!
+#   - ( *assert ) added
+#   - ( if ( $if ) : ( statement ) ( $if ! ) elif ( $elif ) : ( statement ...
+#    instead of clumsy ( if ( ( $if ) : ( statement ) ( $if ! ) ) elif ( ( statement ...
+#   - ( $i ++ ) instead of clumsy ( $i $i 1 + = )
+#   - ( $i -- ) instead of clumsy ( $i $i 1 - = )
+#   - ( $i 2.3 += ) instead of clumsy ( $i $i 2.3 + = )
+#   - ( $i 2.3 -= ) instead of clumsy ( $i $i 2.3 - = )
+#   - ( 1.23 1 *precision ! ) -> 1.2
+#   - ( *clock_start ) and ( *clock_diff ) you can benchmark your code very easily!
+#
 #  - 0.81
-#    - Regex is now well written and easy to add features in future
-#    - A few bugs solved + speedups
-#    - unit_tests.flang added
+#   - Regex is now well written and easy to add features in future
+#   - A few bugs solved + speedups
+#   - unit_tests.flang added
+#
 #  - 0.82
-#    - ( *read_file ) Very easy and safe to read file. Can read any size of file.
-#    - json improved. See unit tests
-#    - Solved 1 more euler in flang - language
-#    - Fixed a couple of bugs
-#    - data.json holds data for euler problems and others in json format
+#   - ( *read_file ) Very easy and safe to read file. Can read any size of file.
+#   - json improved. See unit tests
+#   - Solved 1 more euler in flang - language
+#   - Fixed a couple of bugs
+#   - data.json holds data for euler problems and others in json format
+#
 #  - 0.83
-#    - 3 kind of arrays added for flang
-#      - shared_array of longs and doubles for performance
-#      - A general array in json - format. Very slow but works for anything.
-#      - Check out unittests for examples
-#    - speedups
-#    - Added one more solved euler in unit tests
-#    - tons of bug fixes
-#    - break_loop -> break
-#    - ! -> not
-#    - *print means now print
+#   - 3 kind of arrays added for flang
+#    - shared_array of longs and doubles for performance
+#    - A general array in json - format. Very slow but works for anything.
+#    - Check out unittests for examples
+#   - speedups
+#   - Added one more solved euler in unit tests
+#   - tons of bug fixes
+#   - break_loop -> break
+#   - ! -> not
+#   - *print means now print
+#
 #  - 0.84
-#    - flang now supports recursive functions!
-#    - And globals too!
-#    - Added 1 more solved euler. Check for example about recursive and globals 
-#        support in flang.
+#   - flang now supports recursive functions!
+#   - And globals too!
+#   - Added 1 more solved euler. Check for example about recursive and globals 
+#    support in flang.
 #  - 0.85
-#    - Not so much new features. But under the hood I speedup flang a lot.
-#        Just cleaning and removing code resulted 15s save in unittests!
-#    - ( *array_pop ) added. It will remove the last element of the array. 
-#        Check for unitests for implementation!
-#    - Actually quite a lot of bugs
+#   - Not so much new features. But under the hood I speedup flang a lot.
+#    Just cleaning and removing code resulted 15s save in unittests!
+#   - ( *array_pop ) added. It will remove the last element of the array. 
+#    Check for unitests for implementation!
+#   - Actually quite a lot of bugs
+#
+#  - 0.86
+#   - This is a milestone release.
+#   - Lambdas added. They work the same way as functions but they are nameless 
+#    and you pass/assign them around.
+#   - *= added
+#   - /= added
+#   - As lambdas land on flang all features I wanted are now set!
+#    As a one man project I have keep flang small and speedy!
+#    All needed now is just fixing bugs, improving speed and adding 
+#    more uselful functions. 
+#   - flang has a good design so adding lambdas was just 10 lines of code really.
+#   - self added. It refers to the current function.
+#   - :$var <- this calls a lambda function a variable refers to.
+#   - 3 more Eulers solved to show how labmda works in real world!
+#    Checkout euler_problems.flang

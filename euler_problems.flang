@@ -5,7 +5,7 @@
 #  - Correct results are expected each and every time!
 #  - This document works as a style guide for flang as well.
 #  - See README more about flang and its design philosophy
-# language: flang ( v. 0.85 )
+# language: flang ( v. 0.86 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
 ( function :euler_1 ( ) :
@@ -42,7 +42,7 @@
     ( $biggest_factor 0 = )
 	( loop ( $n $bignum 1 + < ) :
 		( if ( $n *is_prime $bignum $n % 0 == and ) :
-		    ( $bignum $bignum $n / = )
+		    ( $bignum $n /= )
 		    ( $biggest_factor $biggest_factor $n *max = )
         )
 		( $n ++ )
@@ -101,7 +101,7 @@
 	    ( $squares_of_sum $i += )
         ( $i ++ )
     )
-    ( $squares_of_sum $squares_of_sum $squares_of_sum * =  )
+    ( $squares_of_sum $squares_of_sum *= )
     ( $squares_of_sum $sum_of_squares - ) 
 )
 
@@ -243,7 +243,7 @@
 				( $factors ++ )
 			)			
 			( $k ++ )
-			( $count $factors 1 + $count * = )		
+			( $count $factors 1 + *= )		
 		)	
 		( if ( $count 500 > ) : 
 			( $sum2 ) 
@@ -316,41 +316,159 @@
     ( $best_i )  
 )
 
-( function :luke_the_grid_walker ( $x $y ) :
-	( if ( $x $$GRIDSIZE > $y $$GRIDSIZE > or ) : 
-		( 0 ) 
-		( return ) 
-	)	
-	# ie. "2x2" grid is actually 3 wide that's why we make x 1 longer!
-	( $pnt $y $$GRIDSIZE 1 + * $x + = )	
-	( $n $pnt *get_salong = )	
-	( if ( $n 0 > ) : ( $n ) ( return ) )        
-	( if ( $x $$GRIDSIZE == $y $$GRIDSIZE == and ) :
-		( 1 )
-		( return )
-	else : 
-		( $tmp1 $x 1 + $y :luke_the_grid_walker = ) 
-		( $tmp2 $x $y 1 + :luke_the_grid_walker = ) 		
-		( $res $tmp1 $tmp2 + = )		
-        ( $pnt $res *set_salong )        
-        ( $res )
-		( return )
-	)
-)
-
 # Propably useless to use globals here but 
 # you can use it to walk through general size of arrays
 # flang now supports recursive functions!
 ( function :euler_15 ( ) :
+    ( $luke_the_gridwalker ( lambda ( $x $y ) :
+	    ( if ( $x $$GRIDSIZE > $y $$GRIDSIZE > or ) : 
+		    ( 0 ) 
+		    ( return ) 
+	    )	
+	    # ie. "2x2" grid is actually 3 wide that's why we make x 1 longer!
+	    ( $pnt $y $$GRIDSIZE 1 + * $x + = )	
+	    ( $n $pnt *get_salong = )	
+	    ( if ( $n 0 > ) : ( $n ) ( return ) )        
+	    ( if ( $x $$GRIDSIZE == $y $$GRIDSIZE == and ) :
+		    ( 1 )
+		    ( return )
+	    else : 
+		    ( $tmp1 $x 1 + $y self = ) 
+		    ( $tmp2 $x $y 1 + self = ) 		
+		    ( $res $tmp1 $tmp2 + = )		
+            ( $pnt $res *set_salong )        
+            ( $res )
+		    ( return )
+	    )
+    ) = )
    	( $$GRIDSIZE 20 = )
-   	( 1000000 *resize_salong )
+   	( 100000 *resize_salong )
    	( *reset_salong )   	
-   	( $result 0 0 :luke_the_grid_walker = )
-   	( *free_salong )
-   	( $result )
+   	( 0 0 :$luke_the_gridwalker )
+   	# ( *free_salong ) # no need to free this really
 )
 
-# Euler unit tests # 76.767s
+( function :euler_16 ( ) :
+    ( $multiply_2 ( lambda ( $num ) : 
+        ( $len $num *length = ) 
+        ( $new "" = )
+        ( $i $len 1 - = ) 
+        ( $leftover 0 = ) 
+        ( loop ( $i 0 >= ) : 
+            ( $n $num $i *char_at = )
+            ( $n $n 2 * $leftover + = )
+            ( $leftover 0 = )
+            ( if ( $n 9 > ) : ( $n 10 -= ) ( $leftover 1 = ) )
+            ( $new $n $new *join = )
+            ( $i -- ) 
+        )
+        ( if ( $leftover ) : ( $new $leftover $new *join = ) )
+        ( $new )
+    ) = )
+    ( $num "2" = $i 1 = )    
+    ( loop ( $i 1000 < ) : ( $num $num :$multiply_2 = ) ( $i ++ ) )
+    ( $len $num *length = )
+    ( $i 0 = )
+    ( $sum 0 = )
+    ( loop ( $i $len < ) : ( $sum $num $i *char_at += ) ( $i ++ ) )
+    ( $sum )
+)
+
+( function :euler_17 ( ) :
+    ( $num_words ( lambda ( $n ) : 
+        ( if ( $n 1 == ) : ( "one" )  
+        elif ( $n 2 == ) : ( "two" )  
+        elif ( $n 3 == ) : ( "three" )  
+        elif ( $n 4 == ) : ( "four" )  
+        elif ( $n 5 == ) : ( "five" )  
+        elif ( $n 6 == ) : ( "six" )  
+        elif ( $n 7 == ) : ( "seven" )  
+        elif ( $n 8 == ) : ( "eight" )  
+        elif ( $n 9 == ) : ( "nine" )  
+        elif ( $n 10 == ) : ( "ten" )  
+        elif ( $n 11 == ) : ( "eleven" )  
+        elif ( $n 12 == ) : ( "twelve" )  
+        elif ( $n 13 == ) : ( "thirteen" )  
+        elif ( $n 14 == ) : ( "fourteen" )  
+        elif ( $n 15 == ) : ( "fifteen" )  
+        elif ( $n 16 == ) : ( "sixteen" )  
+        elif ( $n 17 == ) : ( "seventeen" )  
+        elif ( $n 18 == ) : ( "eighteen" )  
+        elif ( $n 19 == ) : ( "nineteen" )  
+        elif ( $n 20 == ) : ( "twenty" )  
+        elif ( $n 30 == ) : ( "thirty" )  
+        elif ( $n 40 == ) : ( "forty" )  
+        elif ( $n 50 == ) : ( "fifty" )  
+        elif ( $n 60 == ) : ( "sixty" )  
+        elif ( $n 70 == ) : ( "seventy" )
+        elif ( $n 80 == ) : ( "eighty" ) 
+        elif ( $n 90 == ) : ( "ninety" ) 
+        else : ( "" )
+    ) ) = )
+    ( $num_to_words ( lambda ( $n $num_words ) :
+        ( $res "" = )
+        ( $len $n *length = ) 
+        ( if ( $n *length 4 == ) : ( "onethousand" ) ( return ) )
+        ( if ( $n *length 3 == ) : 
+            ( $tmp $n 0 *char_at :$num_words = )
+            ( $res $res $tmp *join "hundred" *join = ) 
+            ( $n $n 1 3 *string_slice = ) 
+            ( $n $n *int = )
+            ( if ( $n *int ) : ( $res $res "and" *join = ) )
+        )
+        ( $n $n *int = ) # cleanup because we might have ugly 01 / 06 ...
+        ( if ( $n *length 2 <= ) :
+            ( if ( $n 21 < ) : 
+            ( $res $res $n :$num_words *join = ) 
+                ( $res ) 
+                ( return ) 
+            )
+            ( $tmp $n $n 10 % - :$num_words = )
+            ( $tmp2 $n 10 % :$num_words = )
+            ( $res $tmp *join $tmp2 *join ) 
+            ( return )
+        )
+    ) = )
+    ( $i 1 = ) 
+    ( $sum 0 = ) 
+    ( loop ( $i 1000 <= ) : ( $sum $num_words $i :$num_to_words *length += ) ( $i ++ ) )
+    ( $sum )
+)
+
+( function :euler_18 ( ) :
+    ( $luke_the_trianglewalker ( lambda ( $x $y ) :
+        ( if ( $y 15 >= ) :
+            ( 0 )
+            ( return ) 
+        )
+        ( $s "7595641747821835871020048247651901237503348802777307636799650428061670924141265683408070334148723347323716942953714465254391529"
+            "75114701133287773177839681757917152381714914358502729486366046889536730731669874031046298272309709873933853600423" *join = )
+        # 0.5 * ( n + 1 ) * ( n )
+        # 0 => 0 / 1 => 1 / 2 => 3 / 3 => 6 / 4 => 10 / ...
+        ( $start 0.5 $y 1 + $y * * *int 2 * = )
+        ( $max 0 = )
+        ( $pnt $start $x 2 * + = )
+        ( $num $s $pnt *char_at = )
+        ( $num $num $s $pnt 1 + *char_at *join = )
+        ( $num $num *int = )
+        ( $tmp $pnt *get_salong = )	
+        ( if ( $tmp  ) : 
+             ( $max $max $tmp $num + *max = )
+            else : 
+            ( $res1 $y 1 + $x self = )
+            ( $res2 $y 1 + $x 1 + self = )
+            ( $res $res1 $res2 *max = )
+            ( $pnt $res *set_salong ) 
+            ( $max $max $res $num + *max = )
+        )
+        ( $max )
+    ) = )
+   	( 1000000 *resize_salong )
+   	( *reset_salong )
+    ( 0 0 :$luke_the_trianglewalker ) 
+)
+
+# Euler unit tests # 168.204s
 ( function :main ( ) :
     ( *clock_start )
     ( :euler_1 233168 == *assert )
@@ -368,6 +486,9 @@
     ( :euler_13 5537376230 == *assert ) 
     ( :euler_14 837799 == *assert ) 
     ( :euler_15 137846528820 == *assert )
+    ( :euler_16 1366 == *assert )
+    ( :euler_17 21124 == *assert )
+    ( :euler_18 1074 == *assert )
     ( "Euler unit tests # " *clock_diff 3 *precision *join "s" *join *print )
 )
 
