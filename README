@@ -1,37 +1,29 @@
 # flang - a functional language
 #
 # - flang's design philosophy: 
-#  1. Small, simple and fast.
+#  1. Small and fast.
 #  2. Very fast to parse. That's why I chose postfix. It is really fast to parse.
 #   - In infix a compiler needs to work much harder. Results user to wait unnecessary!.
 #  3. Functional design.
 #   - 4 different functions. function, lambdas, :func and *func.
-#   - flang's function calls are very light.
+#   - flangs function calls are very light. 
 #    As current state is not saved anywhere! As in other laguages.
-#  4. Stack based model of strings. 
-#   - It just makes the whole language simple and bug free thus fast!
-#  5. Only the most necessary bits will be included.
+#  4. Stack based model of string. 
+#   - It just makes the whole language bug free thus fast!
+#  5. Only necessary bits will be included.
 #
 # - ( Very ) short guide
 #  - Variables: $myvar
 #  - Globals: $$myglobal
+#  - Globals: $$myglobal
 #  - Comments: #
 #  - Types: No types. Everything is a string!
 #  - Boolean: "0" is false. Everything else is true. It's that simple!
-#  - loop: ( loop ( expr ) : ( statement ) ... )
-#  - if: ( if ( expr ) : ( statement ) ... 
-#   elif ( expr ) : ( statement ) ... else : ( statement ) ...  )
-#  - lambda: ( lambda ( $arg? ... ) : ( statement ) ... )
-#  - function: ( function :yourfunc ( $arg? ... ) : ( statement ) ... )
-#  - user function calls: :userfunc
-#  - flang function calls: *flangfunc
-#  - set value: ( $var 42 = )
-#  - self: refers to current function/lambda
-#  - ++ / -- / += / -= / *= ...: Make code simpler and faster free.
+#  - ++ / -- / += / -= / *= ... to make coding faster and bug free.
 #  ...
 #
 # - Random facts about flang
-#  - flang has built-in regex lib ( pretty stable ) and json lib ( stable ).
+#  - flang has regex lib ( pretty stable ) and json lib ( very stable ).
 #  - flang stores everything in strings and only resolves types in runtime.
 #  - flang uses double for floats and long for integers.
 #  - flang uses dynamic memory allocation for most parts.
@@ -44,7 +36,7 @@
 #  - flang is compiled in Linux ( gcc -Wall -O2 -s flang-0.8c -o flang ). 
 #   But it doesn't use anything Linux specific! flang works on any OS!
 #  - flang project is all about flang language. 
-#   Rather than my C-implementation of interpreter.
+#   Rather than my C implementation of interpreter.
 #
 # - Versions:
 #
@@ -98,7 +90,6 @@
 #   - And globals too!
 #   - Added 1 more solved euler. Check for example about recursive and globals 
 #    support in flang.
-#
 #  - 0.85
 #   - Not so much new features. But under the hood I speedup flang a lot.
 #    Just cleaning and removing code resulted 15s save in unittests!
@@ -112,11 +103,10 @@
 #    and you pass/assign them around.
 #   - *= added
 #   - /= added
-#   - much more
 #   - As lambdas land on flang all features I wanted are now set!
 #    As a one man project I have keep flang small and speedy!
-#    All needed now is just fixing bugs, improving speed 
-#    and adding more uselful functions. 
+#    All needed now is just fixing bugs, improving speed and adding 
+#    more uselful functions. 
 #   - flang has a good design so adding lambdas was just 10 lines of code really.
 #   - self added. It refers to the current function.
 #   - :$var <- this calls a lambda function a variable refers to.
