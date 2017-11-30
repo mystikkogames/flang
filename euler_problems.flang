@@ -143,7 +143,7 @@
         )
         ( $a ++ )
     )
-    ( "Shouldn't se me!" *print )
+    ( "Shouldn't see me!" *print )
 )
 
 # in brute force we trust!
@@ -468,9 +468,35 @@
     ( 0 0 :$luke_the_trianglewalker ) 
 )
 
-# Euler unit tests # 168.204s
-( function :main ( ) :
-    ( *clock_start )
+( function :euler_32 ( ) :
+   	( 1000000 *resize_salong )
+   	( *reset_salong )
+   	( $sum_of_products 0 = )
+    ( $is_pandigital ( lambda ( $num ) : 
+        ( $i 1 = )
+        ( loop ( $i 9 <= ) : ( if ( $num $i *string_contains_char ! ) : ( 0 ) ( return ) ) ( $i ++ ) )
+        ( 1 )
+    ) = )
+    ( $i 0 = )
+    ( loop ( $i 10000 < ) :
+        ( $j 0 = )
+        ( loop ( $j 100 < ) : # 10 000 * 100 = 1 000 000 way more than needed 
+            ( $product $i $j * = )
+            ( $sum $i $j *join $product *join = )
+            ( $len $sum *length = )
+            ( if ( $len 9 > ) : ( break ) )
+            ( if ( $len 9 == $sum :$is_pandigital and $product *get_salong ! and ) : 
+                ( $product 1 *set_salong ) 
+   	            ( $sum_of_products $product += )
+            )         
+            ( $j ++ )
+        )
+        ( $i ++ )
+    )
+    ( $sum_of_products  )
+)
+
+( function :euler_unit_tests ( ) :
     ( :euler_1 233168 == *assert )
     ( :euler_2 4613732 == *assert )
     ( :euler_3 6857 == *assert )
@@ -484,11 +510,14 @@
     ( :euler_11 70600674 == *assert )
     ( :euler_12 76576500 == *assert ) 
     ( :euler_13 5537376230 == *assert ) 
-    ( :euler_14 837799 == *assert ) 
-    ( :euler_15 137846528820 == *assert )
+    #( :euler_14 837799 == *assert ) 
+    #( :euler_15 137846528820 == *assert )
     ( :euler_16 1366 == *assert )
     ( :euler_17 21124 == *assert )
     ( :euler_18 1074 == *assert )
-    ( "Euler unit tests # " *clock_diff 3 *precision *join "s" *join *print )
+    ( :euler_32 45228 == *assert )
 )
+
+# Run with unittest uncomment this if you wan to run this file only!
+#( function :main ( ) : ( :euler_unit_tests ) )
 

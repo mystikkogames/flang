@@ -6,9 +6,9 @@
 # language: flang ( v. 0.86 )
 # author: mystikkogames ( mystikkogames@protonmail.com )
 
-( function :main ( ) :
+( include "euler_problems.flang" )
 
-    ( *clock_start )
+( function :flang_unit_tests ( ) :
     
     # POSITIVE
     
@@ -38,6 +38,18 @@
     ( $var $var *array_pop = )
     ( $var *array_length 3 == *assert )
     
+    ( $o "{'r': '24', 'g': '33', 'b': '55', 'x': '22', 'y': '42'}" = ) 
+    ( ".g" $o *json_read "33" == *assert )
+    ( ".y" $o *json_read "42" == *assert )
+
+    #( $o ".x" "125" $o *json_write = ) 
+
+    ( $o ".x" "125" *json_write2 ) 
+    ( $o ".x" *json_read2 "125" == *assert )
+
+    ( ".x" $o *json_read "125" == *assert )
+
+
     ( $var ".name" "smt" "{'name': 'mystikkogames'}" *json_write = ) 
     ( ".name" $var *json_read "smt" == *assert )
     
@@ -70,6 +82,10 @@
    	( $var 42 = )
    	( if ( 0 ) : ( $var 0 = ) else : ( $var 111 = ) )
     ( $var 111 == *assert )
+
+   	( $var 42 = )
+   	( if ( 0 ) : ( $var 0 = ) elif ( 1 ) : ( $var 19 = ) else : ( $var 111 = ) )
+    ( $var 19 == *assert )
     
    	( $var 42 = )
    	( $var 10 %= )
@@ -114,10 +130,6 @@
    	( $var 42 = )
    	( $var -- )
    	( $var 41 == *assert )
-
-   	( $var 42 = )
-   	( if ( 0 ) : ( $var 0 = ) elif ( 1 ) : ( $var 19 = ) else : ( $var 111 = ) )
-    ( $var 19 == *assert )
     
    	( $var 100 = )
    	( $var 10 -= )
@@ -166,7 +178,20 @@
     
     ( "-0.1ad2" *is_number ! *assert )
     
-    # flang unit tests # 0.017s
-    ( "flang unit tests # "*clock_diff 3 *precision *join "s" *join *print )    
 )
 
+( function :main ( ) :
+
+    ( *clock_start )
+    ( :flang_unit_tests )
+    ( "flang unit tests # " *clock_diff_nice *join *print )
+
+    ( *clock_start )
+    ( :euler_unit_tests )
+    ( "Euler unit tests # " *clock_diff_nice *join *print )
+
+    #( "flang total # " *clock_total_nice *join *print )
+    #( *clock_diff_nice *print )
+    #( "flang unit tests # "*clock_diff 3 *precision *join "s" *join *print )    
+
+)
