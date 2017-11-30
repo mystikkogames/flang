@@ -478,7 +478,7 @@
         ( 1 )
     ) = )
     ( $i 0 = )
-    ( loop ( $i 10000 < ) :
+    ( loop ( $i 3000 < ) :
         ( $j 0 = )
         ( loop ( $j 100 < ) : # 10 000 * 100 = 1 000 000 way more than needed 
             ( $product $i $j * = )
@@ -486,6 +486,7 @@
             ( $len $sum *length = )
             ( if ( $len 9 > ) : ( break ) )
             ( if ( $len 9 == $sum :$is_pandigital and $product *get_salong ! and ) : 
+                ( $product *print)
                 ( $product 1 *set_salong ) 
    	            ( $sum_of_products $product += )
             )         
@@ -510,8 +511,8 @@
     ( :euler_11 70600674 == *assert )
     ( :euler_12 76576500 == *assert ) 
     ( :euler_13 5537376230 == *assert ) 
-    #( :euler_14 837799 == *assert ) 
-    #( :euler_15 137846528820 == *assert )
+    ( :euler_14 837799 == *assert ) 
+    ( :euler_15 137846528820 == *assert )
     ( :euler_16 1366 == *assert )
     ( :euler_17 21124 == *assert )
     ( :euler_18 1074 == *assert )
