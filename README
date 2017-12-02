@@ -1,15 +1,19 @@
 flang - a functional language
 
  flang's design philosophy: 
-  1. Small, fast and elegant.
-  2. Extremely fast to parse. 
+  1. Small, simple and extremely fast.
+  2. Elegant. 
   3. Functional design.
 
  ( Very ) short guide
   - Variables: $myvar
   - Globals: $$myglobal
-  - Comments: #
-  - Multiline Comments: #### -> ###
+  - Singleline comments: #
+  - Multiline comments: ### -> ###
+  - break: breaks loop
+  - continue: continues loop from start
+  - include: Includes file at the top.
+  - const: Creates a constant. Can't use that as a variable!
   - Types: No types. Everything is a string!
   - Boolean: "0" is false. Everything else is true. It's that simple!
   - loop: ( loop ( expr ) : ( statement ) ... )
@@ -21,16 +25,16 @@ flang - a functional language
   - flang function calls: *flangfunc
   - Set value: ( $var 42 = )
   - self: refers to current function/lambda
-  - ++ / -- / += / -= / *= ...: Make code simpler and faster free.
+  - ++ / -- / += / -= / *= ...: Make code simpler and faster.
   - ...
 
  Random facts about flang
+  - flang is an interpreted language like Ruby or Python.
   - flang has built-in regex lib ( pretty stable ) and json lib ( stable ).
   - flang stores everything in strings and only resolves types in runtime.
   - flang uses double for floats and long for integers.
   - flang uses dynamic memory allocation for most parts.
-  - flang is an interpreted language like Ruby or Python.
-  - flang is designed real world problems! 
+  - flang is designed for real world problems! 
   - flang is written in C-language.
   - flang has tons of unittests to stress flang to its limits.
   - flang's unittests/benchmarks: euler_problems.flang + unit_tests.flang
