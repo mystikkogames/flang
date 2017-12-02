@@ -1,0 +1,28 @@
+###
+String functions written in flang - language
+ language: flang ( v. 0.87 )
+ author: mystikkogames ( mystikkogames@protonmail.com )
+ license: GPLv2
+###
+
+( function :string_is_whitespace ( $c ) :
+	( if ( $c " " == ) : ( 1 ) ( return )
+	elif ( $c "\t" == ) : ( 1 ) ( return )
+	elif ( $c "\n" == ) : ( 1 ) ( return )
+	)
+	( 0 ) ( return )
+)
+
+( function :string_remove_whitespace ( $str ) :
+	( $len $str *length = )
+	( $i 0 = )
+	( $ret "" = )
+    ( loop ( $i $len < ) : 
+    	( $ch $str $i *char_at = )
+    	( if ( $ch :string_is_whitespace ! ) :
+    		( $ret $ret $ch *join = )
+    	)
+    	( $i ++ )
+    )
+    ( $ret )
+)

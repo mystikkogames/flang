@@ -1,12 +1,11 @@
-# flang - a functional language
-#  - Euler problems ( https://projecteuler.net/archives ) solved in 
-#      flang - language to show its features
-#  - These are also unit tests for flang
-#  - Correct results are expected each and every time!
-#  - This document works as a style guide for flang as well.
-#  - See README more about flang and its design philosophy
-# language: flang ( v. 0.86 )
-# author: mystikkogames ( mystikkogames@protonmail.com )
+###
+Euler problems ( https://projecteuler.net/archives ) unit tests for flang - language.
+ language: flang ( v. 0.87 )
+ author: mystikkogames ( mystikkogames@protonmail.com )
+ license: GPLv2
+###
+
+( include "string.flang" )
 
 ( function :euler_1 ( ) :
     ( $sum 0 = )
@@ -110,8 +109,8 @@
 )
 
 ( function :euler_8 ( ) :   
-    ( $data "data.json" *read_file =  ) 
-    ( $str ".euler_8" $data *json_read *remove_whitespace = )
+    ( $data "data.json" *read_file = ) 
+    ( $str $data ".euler_8" *json_read :string_remove_whitespace = )
     ( $len $str *length = )
     ( $i 0 = )
     ( $maximum 0 = )
@@ -161,7 +160,7 @@
 
 ( function :euler_11 ( ) :   
     ( $data "data.json" *read_file =  ) 
-    ( $str ".euler_11" $data *json_read *remove_whitespace = )
+    ( $str $data ".euler_11" *json_read :string_remove_whitespace = )
     ( $x 0 = )
     ( $maximum 0 = )
     ( loop ( $x 16 < ) :
@@ -256,7 +255,7 @@
 # Good old brute force in action
 ( function :euler_13 ( ) :
     ( $data "data.json" *read_file = ) 
-    ( $bigdata ".euler_13" $data *json_read *remove_whitespace = )
+    ( $bigdata $data ".euler_13" *json_read :string_remove_whitespace = )
     ( $x 49 = )
     ( $sum "" = )
     ( $leftover 0 = )
@@ -486,7 +485,6 @@
             ( $len $sum *length = )
             ( if ( $len 9 > ) : ( break ) )
             ( if ( $len 9 == $sum :$is_pandigital and $product *get_salong ! and ) : 
-                ( $product *print)
                 ( $product 1 *set_salong ) 
    	            ( $sum_of_products $product += )
             )         
@@ -519,6 +517,12 @@
     ( :euler_32 45228 == *assert )
 )
 
+###
 # Run with unittest uncomment this if you wan to run this file only!
 #( function :main ( ) : ( :euler_unit_tests ) )
-
+( function :main ( ) :
+    ( *clock_start )
+    ( :euler_unit_tests )
+    ( "Euler unit tests # " *clock_diff_nice *join *print )
+)
+###

@@ -1,35 +1,34 @@
-# flang - a functional language
-#  - Unit tests for flang - language
-#  - flang is designed to solve real world problems.
-#  - This document works as a style guide for flang as well.
-#  - See README more about flang and its design philosophy
-# language: flang ( v. 0.86 )
-# author: mystikkogames ( mystikkogames@protonmail.com )
+###
+Unit tests for flang - language
+ language: flang ( v. 0.87 )
+ author: mystikkogames ( mystikkogames@protonmail.com )
+ license: GPLv2
+###
 
 ( include "euler_problems.flang" )
+( include "string.flang" )
 
 ( function :flang_unit_tests ( ) :
     
     # POSITIVE
     
-    ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" *regex_match *assert )
+    ( "a b c d e f " :string_remove_whitespace "abcdef" == *assert )
+    ( " " :string_is_whitespace *assert )
     
-    ( "sdf 012dfdsf" "/[0-9]{3}/" *regex_match *assert )
-    
-    ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" *regex_match *assert )
-    
-    ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match *assert )
-    
-    ( ".name" "{'name': 'mystikkogames'}" *json_read "mystikkogames" == *assert )
-    
-    ( ".name.value[3]" "{'name': {'value': ['1','2','3','mystikkogames']}" *json_read "mystikkogames" == *assert )
+    ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" *regex_match *assert )    
+    ( "sdf 012dfdsf" "/[0-9]{3}/" *regex_match *assert )    
+    ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" *regex_match *assert )    
+    ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match *assert )    
+
+    ( "{'name': 'mystikkogames'}" ".name" *json_read "mystikkogames" == *assert )    
+    ( "{'name': {'value': ['1','2','3','mystikkogames']}" ".name.value[3]" *json_read "mystikkogames" == *assert )
     
     ( $var *array_new = )
-    ( $var $var "12" *array_push = )
-    ( $var $var "345" *array_push = )
-    ( $var $var "6" *array_push = )
-    ( $var $var "7" *array_push = )
-    ( $var $var "89" *array_push = )
+    ( $var "12" *array_push )
+    ( $var "345" *array_push )
+    ( $var "6" *array_push )
+    ( $var "7" *array_push )
+    ( $var "89" *array_push )
     ( $var *array_length 5 == *assert )
     ( $var 1 *array_get "345" == *assert )
     ( $var 0 *array_get "12" == *assert )
@@ -39,19 +38,21 @@
     ( $var *array_length 3 == *assert )
     
     ( $o "{'r': '24', 'g': '33', 'b': '55', 'x': '22', 'y': '42'}" = ) 
-    ( ".g" $o *json_read "33" == *assert )
-    ( ".y" $o *json_read "42" == *assert )
+    ( $o ".g" *json_read 33 == *assert )
+    ( $o ".y" *json_read 42 == *assert )
+    ( $o ".x" *json_read 22 == *assert )
 
-    #( $o ".x" "125" $o *json_write = ) 
+    ( $o ".x" "125" *json_write ) 
+    ( $o ".x" *json_read "125" == *assert )
 
-    ( $o ".x" "125" *json_write2 ) 
-    ( $o ".x" *json_read2 "125" == *assert )
+    ( $o ".x" *json_read "125" == *assert )
 
-    ( ".x" $o *json_read "125" == *assert )
+    ( "abcdef" "bcd" *contains *assert )
+    ( "abcde484f" "484" *contains *assert )
 
-
-    ( $var ".name" "smt" "{'name': 'mystikkogames'}" *json_write = ) 
-    ( ".name" $var *json_read "smt" == *assert )
+    ( $var "{'name': 'mystikkogames'}" = ) 
+    ( $var ".name" "42" *json_write )
+    ( $var ".name" *json_read "42" == *assert )
     
     ( $multiply_by_2 ( lambda ( $num ) : ( $num 2 * ) ) = )
     ( 7 :$multiply_by_2 14 == *assert )
@@ -157,41 +158,46 @@
     ( 1 *get_sadouble 2 *precision 42.12 == *assert )
    	
     ( $a *array_new = )
-    ( $a $a "12" *array_push = )
-    ( $a $a "12]6%3" *array_push = )
-    ( $a $a "1sdf2" *array_push = )
-    ( $a $a "42" *array_push = )
-    ( $a $a "12" *array_push = )
+    ( $a "12" *array_push )
+    ( $a "12]6%3" *array_push )
+    ( $a "1sdf2" *array_push )
+    ( $a "42" *array_push )
+    ( $a "12" *array_push )
     ( $a *array_length 5 == *assert )
     ( $a 3 *array_get 42 == *assert )
     
+    ( 0 *sin 0.1 < *assert )
+    ( 0 *cos 0.9 > *assert )
+
     # NEGATIVE
-    
-    # Only "0" is false in flang. Everything else is true!
-    ( "0" ! *assert ) 
-    
-    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match ! *assert )
-    
+        
+    ( "0" ! *assert ) # Only "0" is false in flang. Everything else is true! 
+
+    ( "abcde484f" "000" *contains ! *assert )
+    ( "abcde123123484f" "trim" *contains ! *assert )
+
+    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match ! *assert )    
     ( "sdf 012dfdsf" "/[0-9]{4}/" *regex_match ! *assert )
     
-    ( "-as0.12" *is_number ! *assert )
-    
+    ( "-as0.12" *is_number ! *assert )    
     ( "-0.1ad2" *is_number ! *assert )
     
 )
 
 ( function :main ( ) :
 
+	# flang unit tests # 0.055s
     ( *clock_start )
     ( :flang_unit_tests )
     ( "flang unit tests # " *clock_diff_nice *join *print )
 
+	# Euler unit tests # 52.773s
     ( *clock_start )
     ( :euler_unit_tests )
     ( "Euler unit tests # " *clock_diff_nice *join *print )
-
+	
     #( "flang total # " *clock_total_nice *join *print )
     #( *clock_diff_nice *print )
-    #( "flang unit tests # "*clock_diff 3 *precision *join "s" *join *print )    
+    #( "flang unit tests # "*clock_diff 3 *precision *join "s" *join *print )
 
 )

@@ -1,60 +1,153 @@
-# flang - a functional language
-#  - Examples of flang language
-# language: flang ( v. 0.85 )
-# author: mystikkogames ( mystikkogames@protonmail.com )
+###
+Graphical programs written in flang - language
+ language: flang ( v. 0.87 )
+ author: mystikkogames ( mystikkogames@protonmail.com )
+ license: GPLv2
+###
 
-( function :yourfunc ( $a ) :
-    ( $a *print )
-    ( "and this goes back!" return )
-)
+( include "gfx.flang" )
 
-( function :one_million_primes (  ) :
+# http://rosettacode.org/wiki/Bitmap/Write_a_PPM_file
+# image: https://imgur.com/lWyqS55
+( function :rosetta_example ( ) :
+    ( $width 800 = )
+    ( $height 600 = )
+    ( $width $height *set_dim_pixels )
+    ( *reset_pixels )
     ( $i 0 = )
-	( loop ( $i 1000000 < ) : 
-    	( $i 1 + ". " *join $i *prime_nth *join *print )
-    	( $i $i 1 + = )
+    ( $n $width $height * = )
+    ( loop ( $i $n < ) : 
+        ( $x $i $width % = )
+        ( $y $i $width / *int = )
+        ( $x $y *set_pos_pixel)
+        ( $x 256 % $y 256 % $x $y * 256 % *set_rgb_pixel)
+        ( *render_pixel )
+        ( $i ++ )
     )
+    ( "rosetta_example.ppm" *write_pixels )
 )
-( function :main ( ) :
-    ( "Hello world!" *print )        
-    ( *clock_start )
-    ( "100001th prime: " 100000 *prime_nth *join *print )
-    ( "# " *clock_diff 3 *precision *join "s" *join *print )    
-	( $i 5 = )
-	( loop ( $i 2 > ) : 
-		( $i *print )	
-		( $i -- )	
-	)	
-	( if  ( 1 ) : 
-		( "if!" *print ) 
-	elif ( 0 ) : 
-		( "elif!" *print ) 
-	 else : 
-		( "else!" *print )  
-	)	
-    #( *exit )  
-    # Showing how flang dynamically allocates memory
+
+# image: https://imgur.com/t62BYDB
+( function :render_random_filled_circles ( ) :
+    ( $width 1280 = )
+    ( $height 1024 = )
+    ( $width $height *set_dim_pixels )
+    ( *reset_pixels )
     ( $i 0 = )
-    ( $str "1" = )
-    #( loop ( $i 100000 < ) : ( $str $str "12345678" *join = ) ( $i ++ ) )
-    ( $a 1 = )  
-    ( $a *print ) 
-    ( $a ++ )  
-    ( $a 12.1 += )  
-    ( $a *print )
-    ( 3 3 2.1 * / 3 * 2 + 10 - *print ) # same as -> 3 * 3 / (3 * 2.1) + 2 - 10
-    ( 1 2 *max *print )
-    ( 1 2 *min *print )
-    ( 1000 *prime_nth *print ) 
-    ( 7919 *is_prime *print )
-    ( "this goes to :yourfunc!" :yourfunc *print )
-    ( " re m o th is empt y space " *remove_whitespace *print )
-    ( 123.33 *pow2 *print )
-    ( 123123.1 *sqrt *print )
-    ( "abcdeg" 1 *char_at *print )
-    ( "abc" "def" *join *print )  
-    #( *print_limits )
-    #( *print_id )
-    #( :one_million_primes )    
+    ( $o "{'x': '300', 'y': '300', 'radius': '50', 'r': '125', 'g': '125', 'b': '125'}" = )
+    ( loop ( $i 11 < ) :
+        ( $o ".x" $width *random * *int *json_write ) 
+        ( $o ".y" $height *random * *int *json_write )
+        #( 10 100 *random2 *print )
+        ( $o ".radius" 10 100 *random2 *json_write )
+        ( $o :gfx_render_fill_circle )
+        ( $o $o :gfx_random_color = )
+        ( $i ++ )
+    )
+    ( "render_random_filled_circles.ppm" *write_pixels )
+)
+
+# image: https://imgur.com/oGmkpsk
+( function :render_random_circles ( ) :
+    ( $width 1280 = )
+    ( $height 1024 = )
+    ( $width $height *set_dim_pixels )
+    ( *reset_pixels )
+    ( $i 0 = )
+    ( $o "{'x': '300', 'y': '300', 'radius': '50', 'r': '125', 'g': '125', 'b': '125'}" = )
+    ( loop ( $i 11 < ) :
+        ( $o ".x" $width *random * *int *json_write ) 
+        ( $o ".y" $height *random * *int *json_write )
+        ( $o ".radius" 10 100 *random2 *json_write )
+        ( $o :gfx_render_circle )
+        ( $o $o :gfx_random_color = )
+        ( $i ++ )
+    )
+    ( "render_random_circles.ppm" *write_pixels )
+)
+
+# image: https://imgur.com/oGmkpsk
+( function :render_random_rectangles ( ) :
+    ( $width 1280 = )
+    ( $height 1024 = )
+    ( $width $height *set_dim_pixels )
+    ( *reset_pixels )
+    ( $i 0 = )
+    ( $o "{'x': '300', 'y': '300', 'r': '125', 'g': '125', 'b': '125'}" = )
+    ( loop ( $i 100 < ) :
+        ( $o ".x" $width *random * *int *json_write ) 
+        ( $o ".y" $height *random * *int *json_write )
+        ( $o ".w" 100 *random * 10 + *int *json_write ) 
+        ( $o ".h" 100 *random * 10 + *int *json_write ) 
+        ( $o $o :gfx_random_color = )
+        ( $o :gfx_render_fill_rectangle )
+        ( $i ++ )
+    )
+    ( "render_random_rectangles.ppm" *write_pixels )
+)
+
+# https://imgur.com/ngPjn7C
+( function :render_random_lines ( ) :
+    ( $width 1280 = )
+    ( $height 1024 = )
+    ( $width $height *set_dim_pixels )
+    ( *reset_pixels )
+    ( $i 0 = )
+    ( $o "{'r': '125', 'g': '125', 'b': '125'}" = )
+    ( loop ( $i 100 < ) :
+        ( $o ".x" $width *random * *int *json_write ) 
+        ( $o ".y" $height *random * *int *json_write )
+        ( $o ".x2" $width *random * *int *json_write ) 
+        ( $o ".y2" $height *random * *int *json_write )
+        ( $o $o :gfx_random_color = )
+        ( $o :gfx_render_line )
+        ( $i ++ )
+    )
+    ( "render_random_lines.ppm" *write_pixels )
+)
+
+# https://imgur.com/ZEJaYid
+( function :render_mandelbrot ( ) :
+    ( $width 1280 = )
+    ( $height 1024 = )
+    ( $width $height *set_dim_pixels )
+    ( *reset_pixels )
+    ( $i 0 = )
+    ( $escaper ( lambda ( $im $re ) : 
+        ( $i 0 = $n 0 = $x 0 = $y 0 = ) 
+        ( loop ( $x *pow2 $y *pow2 + 4 < $i 100 < and ) : 
+            ( $t $x *pow2 $y *pow2 - $re + = ) 
+            ( $y $x $y 2 * * $im + = ) 
+            ( $x $t = ) 
+            ( $i ++ ) 
+        ) 
+        ( $i ) 
+    ) = )
+    ( $colorize ( lambda ( $c ) : 
+        ( if ( $c 100 < ) : ( 25 $c 1.23 * *int + 35 $c 1.57 * *int + 55 $c 1.73 * *int + *set_rgb_pixel ) )
+    ) = )
+    ( $n $width $height * = )
+    ( loop ( $i $n < ) : 
+        ( $x $i $width % = )
+        ( $y $i $width / *int = )
+        ( $x $y *set_pos_pixel)
+        ( $re $x $width 2.0 / - 4.0 * $width / = )
+        ( $im $y $height 2.0 / - 4.0 * $width / = )
+        ( $c $re $im :$escaper = )
+        ( 0 0 0 *set_rgb_pixel)
+        ( $c :$colorize )
+        ( *render_pixel )
+        ( $i ++ )
+    )
+    ( "render_mandelbrot.ppm" *write_pixels )
+) 
+
+( function :main ( ) :
+	( :render_random_lines )
+	( :render_random_rectangles )
+    ( :render_mandelbrot )
+	( :rosetta_example )
+	( :render_random_circles )	
+	( :render_random_filled_circles )
 )
 

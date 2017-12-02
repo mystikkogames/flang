@@ -1,0 +1,167 @@
+###
+Graphical library written in flang - language
+ language: flang ( v. 0.87 )
+ author: mystikkogames ( mystikkogames@protonmail.com )
+ license: GPLv2
+###
+
+( const .PI 3.14159 )
+
+( function :gfx_render_circle ( $o ) :
+    ( $x $o ".x" *json_read = )
+    ( $y $o ".y" *json_read = )
+    ( $radius $o ".radius" *json_read = )
+    ( $r $o ".r" *json_read = )
+    ( $g $o ".g" *json_read = )
+    ( $b $o ".b" *json_read = )
+    ( $angle 0 = )
+    ( $i 0 = )
+    ( $width *get_width_pixel = )
+    ( $height *get_height_pixel = )
+    ( $r $g $b *set_rgb_pixel )
+    ( loop ( $angle .PI 2 * <= ) : 
+        ( $x2 $x $angle *cos $radius * + *int = )
+        ( $y2 $y $angle *sin $radius * + *int = )
+        ( if ( $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and ) :
+            ( $x2 $y2 *set_pos_pixel )
+            ( *render_pixel )
+        )
+        ( $angle 0.001 += )
+        ( $i ++ )
+    )
+)
+
+( function :gfx_render_line ( $o ) :
+    ( $x $o ".x" *json_read = )
+    ( $y $o ".y" *json_read = )
+    ( $x2 $o ".x2" *json_read = )
+    ( $y2 $o ".y2" *json_read = )
+    ( $len $x $x2 - *pow2 $y $y2 - *pow2 + *sqrt = )
+    ( $len *assert )
+    ( $dx $x $x2 - $len / = )
+    ( $dy $y $y2 - $len / = )
+    ( $step 1 $len / = )
+    ( $r $o ".r" *json_read = )
+    ( $g $o ".g" *json_read = )
+    ( $b $o ".b" *json_read = )
+    ( $width *get_width_pixel = )
+    ( $height *get_height_pixel = )
+	( $r $g $b *set_rgb_pixel )
+    ( $i 0 = )
+    ( loop ( $i $len < ) : 
+   		( $x3 $x $dx $i * + = )
+   		( $y3 $y $dy $i * + = )
+        ( if ( $x3 0 >= $x3 $width < and $y3 0 >= $y3 $height < and and ) :
+	   		( $x3 $y3 *set_pos_pixel )
+			( *render_pixel )
+		)
+      	( $i ++ )
+    )
+)
+
+( function :gfx_render_fill_rectangle ( $o ) :
+    ( $x $o ".x" *json_read = )
+    ( $y $o ".y" *json_read = )
+    ( $w $o ".w" *json_read = )
+    ( $h $o ".h" *json_read = )
+    ( $end_x $x $w + = )
+    ( $end_y $y $h + = )
+    ( $radius $o ".radius" *json_read = )
+    ( $r $o ".r" *json_read = )
+    ( $g $o ".g" *json_read = )
+    ( $b $o ".b" *json_read = )
+    ( $angle 0 = )
+    ( $width *get_width_pixel = )
+    ( $height *get_height_pixel = )
+	( $r $g $b *set_rgb_pixel )
+    ( loop ( $y $end_y < ) : 
+        ( $tx $x = )
+        ( loop ( $tx $end_x < ) : 
+            ( if ( $tx $width < $y $height < and ) :
+	        	( $tx $y *set_pos_pixel )
+	        	( *render_pixel )
+	        )
+            ( $tx ++ )
+        )
+        ( $y ++ )
+    )
+)
+
+( function :gfx_render_fill_circle ( $o ) :
+    ( $x $o ".x" *json_read = )
+    ( $y $o ".y" *json_read = )
+    ( $radius $o ".radius" *json_read = )
+    ( $r $o ".r" *json_read = )
+    ( $g $o ".g" *json_read = )
+    ( $b $o ".b" *json_read = )
+    ( $angle 0 = )
+    ( $width *get_width_pixel = )
+    ( $height *get_height_pixel = )
+    ( $end_x $x $radius + = )
+    ( $end_y $y $radius + = )
+    ( $y2 $y $radius - = )
+	( $r $g $b *set_rgb_pixel )
+    ( loop ( $y2 $end_y < ) : 
+        ( $x2 $x $radius - = )
+        ( loop ( $x2 $end_x < ) : 
+            ( if ( $x2 $x - *pow2 $y2 $y - *pow2 + $radius $radius * < $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and and ) :
+		        ( $x2 $y2 *set_pos_pixel )
+		        ( *render_pixel )
+            )
+            ( $x2 ++ )
+        )
+        ( $y2 ++ )
+    )
+)
+
+( function :gfx_random_color ( $o ) :
+    ( $r $o ".r" *json_read = )
+    ( $g $o ".g" *json_read = )
+    ( $b $o ".b" *json_read = )
+    ( $o ".r" *random 255 * *int *json_write )
+    ( $o ".g" *random 255 * *int *json_write )
+    ( $o ".b" *random 255 * *int *json_write )
+    ( $o )
+)
+
+( function :gfx_smooth ( ) :
+    ( $width *get_width_pixel = )
+    ( $height *get_height_pixel = )
+    ( $n $width $height * = )
+    ( $i $width 1 + = )
+    ( loop ( $i $n < ) : 
+        ( $x $i $width % = )
+        ( $y $i $width / *int = )
+        ( if ( $x 0 == $x $width 1 - == $y 0 == $y $height 1 - == or or or ) : ( $i ++ ) ( continue ) )
+        ( $y2 -1 = )
+        ( $r 0 = )
+        ( $g 0 = )
+        ( $b 0 = )
+        ( loop ( $y2 2 < ) : 
+            ( $x2 -1 = )
+            ( loop ( $x2 2 < ) :
+                ( $x $x2 + $y $y2 + *set_pos_pixel)
+                ( $o *get_color_pixel = )
+                ( if ( $x2 0 == $y2 0 == and ) :                     
+                    ( $r $o ".r" *json_read 2 * += ) 
+                    ( $g $o ".g" *json_read 2 * += ) 
+                    ( $b $o ".b" *json_read 2 * += ) 
+                    else :                     
+                    ( $r $o ".r" *json_read += ) 
+                    ( $g $o ".g" *json_read += ) 
+                    ( $b $o ".b" *json_read += ) 
+                )
+                ( $x2 ++ )
+            ) 
+            ( $y2 ++ )
+        )
+
+        ( $x $y *set_pos_pixel )
+        ( $r 10 /= )
+        ( $g 10 /= )
+        ( $b 10 /= )
+        ( $r $g $b *int *set_rgb_pixel)
+        ( *render_pixel )
+        ( $i ++ )
+    )
+)
