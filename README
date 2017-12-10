@@ -7,7 +7,8 @@ flang - a functional language
 
  ( Very ) short guide
   - Variables: $myvar
-  - Globals: $$myglobal
+  - Globals: $GLOBAL
+  - Constants: $$MYCONST
   - Singleline comments: #
   - Multiline comments: ### -> ###
   - break: breaks loop
@@ -21,8 +22,7 @@ flang - a functional language
    elif ( expr ) : ( statement ) ... else : ( statement ) ...  )
   - lambda: ( lambda ( $arg? ... ) : ( statement ) ... )
   - function: ( function :yourfunc ( $arg? ... ) : ( statement ) ... )
-  - User function calls: :userfunc
-  - flang function calls: *flangfunc
+  - Function calls: :max
   - Set value: ( $var 42 = )
   - self: refers to current function/lambda
   - ++ / -- / += / -= / *= ...: Make code simpler and faster.
@@ -119,3 +119,8 @@ flang - a functional language
    - Speed improved radically. Benchmarks 160s -> 50s
    - Tons of new features.
    - libs added so I can finally make flang much smaller
+   
+  - 0.89
+   - Huge cleanup
+   - sa_doubles etc are gone for good
+   - fobj is the new dataholder

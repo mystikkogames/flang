@@ -1,0 +1,53 @@
+###
+Math library functions written in flang
+ language: flang
+ author: mystikkogames ( mystikkogames@protonmail.com )
+ license: GPLv2
+###
+
+( function :math_is_prime ( $prime ) :   
+	( $i 2 = ) 
+	( if ( $prime 2 < ) : ( 0 ) ( return ) )
+	( loop ( $i $i * $prime < ) :
+		( if ( $prime $i % 0 == ) : 
+			( 0 )
+			( return )
+		) 
+		( $i ++ )
+	)
+	( 1 )
+)
+
+( function :math_prime_nth ( $i ) :   
+    ( $i 0 >= :assert )
+    #( $primes [ 2, 3 ] = )        
+    ( if ( $i $PRIMES :len < ) :
+    	( $PRIMES $i :get )
+        ( return )
+    )
+    ( loop ( $PRIMES :len $i <= ) : 
+        ( $candidate $PRIMES $PRIMES :len 1 - :get = )
+        ( loop ( 1 ) :
+            ( $success 1 = )
+            ( $candidate ++ )
+            ( $k 0 = )
+            ( $len $PRIMES :len = )
+            ( loop ( $k $len < ) :
+            	( $t $PRIMES $k :get = )
+            	( if ( $t $t * $candidate > ) :
+            		( break )
+            	)
+            	( if ( $candidate $PRIMES $k :get % 0 == ) :
+                    ( $success 0 = )
+                    ( break )
+               	)
+               	( $k ++ )
+          	)
+            ( if ( $success ) :
+                ( $PRIMES $candidate :push )
+                ( break )
+          	)
+     	)
+  	)
+    ( $PRIMES $i :get )
+)

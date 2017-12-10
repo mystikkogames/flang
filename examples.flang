@@ -1,15 +1,18 @@
 ###
 Graphical programs written in flang - language
- language: flang ( v. 0.87 )
+ language: flang
  author: mystikkogames ( mystikkogames@protonmail.com )
  license: GPLv2
 ###
 
-( include "gfx.flang" )
+
+###
+
+#( include "gfx.flang" )
 
 # http://rosettacode.org/wiki/Bitmap/Write_a_PPM_file
 # image: https://imgur.com/lWyqS55
-( function :rosetta_example ( ) :
+( function :render_rosetta_example ( ) :
     ( $width 800 = )
     ( $height 600 = )
     ( $width $height *set_dim_pixels )
@@ -34,12 +37,15 @@ Graphical programs written in flang - language
     ( $width $height *set_dim_pixels )
     ( *reset_pixels )
     ( $i 0 = )
-    ( $o "{'x': '300', 'y': '300', 'radius': '50', 'r': '125', 'g': '125', 'b': '125'}" = )
+    ( $o ['x': '300', 'y': '300', 'radius': '50', 'r': '125', 'g': '125', 'b': '125'] = )
     ( loop ( $i 11 < ) :
-        ( $o ".x" $width *random * *int *json_write ) 
-        ( $o ".y" $height *random * *int *json_write )
+        ( $o ".x" $width *random * *int <- ) 
+        ( $o ".y" $height *random * *int <- )
+
+        #( $o ".y" $height *random * *int <- *print )
+        
         #( 10 100 *random2 *print )
-        ( $o ".radius" 10 100 *random2 *json_write )
+        ( $o ".radius" 10 100 *random2 <- )
         ( $o :gfx_render_fill_circle )
         ( $o $o :gfx_random_color = )
         ( $i ++ )
@@ -54,11 +60,11 @@ Graphical programs written in flang - language
     ( $width $height *set_dim_pixels )
     ( *reset_pixels )
     ( $i 0 = )
-    ( $o "{'x': '300', 'y': '300', 'radius': '50', 'r': '125', 'g': '125', 'b': '125'}" = )
+    ( $o ['x': '300', 'y': '300', 'radius': '50', 'r': '125', 'g': '125', 'b': '125'] = )
     ( loop ( $i 11 < ) :
-        ( $o ".x" $width *random * *int *json_write ) 
-        ( $o ".y" $height *random * *int *json_write )
-        ( $o ".radius" 10 100 *random2 *json_write )
+        ( $o ".x" $width *random * *int <- ) 
+        ( $o ".y" $height *random * *int <- )
+        ( $o ".radius" 10 100 *random2 <- )
         ( $o :gfx_render_circle )
         ( $o $o :gfx_random_color = )
         ( $i ++ )
@@ -73,12 +79,12 @@ Graphical programs written in flang - language
     ( $width $height *set_dim_pixels )
     ( *reset_pixels )
     ( $i 0 = )
-    ( $o "{'x': '300', 'y': '300', 'r': '125', 'g': '125', 'b': '125'}" = )
+    ( $o ['x': '300', 'y': '300', 'r': '125', 'g': '125', 'b': '125'] = )
     ( loop ( $i 100 < ) :
-        ( $o ".x" $width *random * *int *json_write ) 
-        ( $o ".y" $height *random * *int *json_write )
-        ( $o ".w" 100 *random * 10 + *int *json_write ) 
-        ( $o ".h" 100 *random * 10 + *int *json_write ) 
+        ( $o ".x" $width *random * *int <- ) 
+        ( $o ".y" $height *random * *int <- )
+        ( $o ".w" 100 *random * 10 + *int <- ) 
+        ( $o ".h" 100 *random * 10 + *int <- ) 
         ( $o $o :gfx_random_color = )
         ( $o :gfx_render_fill_rectangle )
         ( $i ++ )
@@ -93,12 +99,12 @@ Graphical programs written in flang - language
     ( $width $height *set_dim_pixels )
     ( *reset_pixels )
     ( $i 0 = )
-    ( $o "{'r': '125', 'g': '125', 'b': '125'}" = )
+    ( $o ['r': '125', 'g': '125', 'b': '125'] = )
     ( loop ( $i 100 < ) :
-        ( $o ".x" $width *random * *int *json_write ) 
-        ( $o ".y" $height *random * *int *json_write )
-        ( $o ".x2" $width *random * *int *json_write ) 
-        ( $o ".y2" $height *random * *int *json_write )
+        ( $o ".x" $width *random * *int <- ) 
+        ( $o ".y" $height *random * *int <- )
+        ( $o ".x2" $width *random * *int <- ) 
+        ( $o ".y2" $height *random * *int <- )
         ( $o $o :gfx_random_color = )
         ( $o :gfx_render_line )
         ( $i ++ )
@@ -108,8 +114,21 @@ Graphical programs written in flang - language
 
 # https://imgur.com/ZEJaYid
 ( function :render_mandelbrot ( ) :
-    ( $width 1280 = )
-    ( $height 1024 = )
+    ( [ "width": 100, "height": 100, "factor": 0.51, "dx": 70, "dy": 50, "r": 40, "g": 50, "b": 70 ] :render_mandelbrot2 )
+)
+
+( function :render_mandelbrot2 ( $o ) :
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )
+    ( $dx $o ".dx" -> = )
+    ( $dy $o ".dy" -> = ) 
+	( $r $o ".r" -> = )
+	( $g $o ".g" -> = )
+	( $b $o ".b" -> = )
+	( $fr $o ".r" -> = )
+	( $fg $o ".g" -> = )
+	( $fb $o ".b" -> = )
+    ( $factor $o ".factor" -> = )
     ( $width $height *set_dim_pixels )
     ( *reset_pixels )
     ( $i 0 = )
@@ -123,31 +142,166 @@ Graphical programs written in flang - language
         ) 
         ( $i ) 
     ) = )
-    ( $colorize ( lambda ( $c ) : 
-        ( if ( $c 100 < ) : ( 25 $c 1.23 * *int + 35 $c 1.57 * *int + 55 $c 1.73 * *int + *set_rgb_pixel ) )
-    ) = )
     ( $n $width $height * = )
+    ( $dx $width -2 / $width 2 / *random2 = )
+    ( $dy $height -2 / $height 2 / *random2 = )
     ( loop ( $i $n < ) : 
         ( $x $i $width % = )
         ( $y $i $width / *int = )
         ( $x $y *set_pos_pixel)
-        ( $re $x $width 2.0 / - 4.0 * $width / = )
-        ( $im $y $height 2.0 / - 4.0 * $width / = )
+        ( $re $x $dx + $width 2.0 / - $factor * $width / = )
+        ( $im $y $dy + $height 2.0 / - $factor * $width / = )
         ( $c $re $im :$escaper = )
         ( 0 0 0 *set_rgb_pixel)
-        ( $c :$colorize )
+        ( if ( $c 100 < ) : ( $r $c $fr * *int + $g $c $fg * *int + $b $c $fb * *int + *set_rgb_pixel ) )
+        #( $c $o :$colorize )
         ( *render_pixel )
         ( $i ++ )
     )
-    ( "render_mandelbrot.ppm" *write_pixels )
+    ( 1 1000 *random2 "render_mandelbrot.ppm" *join *write_pixels )
+) 
+
+( function :random_mandelbrots ( ) :
+	( $i 0 = )
+	( loop ( $i 100 < ) : 
+		( $o ['width':'500','height':'500','factor':'0.51','dx':'70','dy':'50'] = )
+        ( $o ".factor" 0.01 10 *random2 <- )
+        ( $o ".dx" -50 50 *random2 <- )
+        ( $o ".dy" -50 50 *random2 <- )
+        ( $o ".r" 0 50 *random2 <- )
+        ( $o ".g" 0 50 *random2 <- )
+        ( $o ".b" 0 50 *random2 <- )
+        ( $o ".fr" 1 1.5 *random2 <- )
+        ( $o ".fg" 1 1.5 *random2 <- )
+        ( $o ".fb" 1 1.5 *random2 <- )
+		( $o :render_mandelbrot2 )
+		( $i ++ )
+	)
+		
+)
+
+( function :main ( ) :
+	#( :random_mandelbrots )
+	( :render_rosetta_example )
+	( :render_random_lines )
+	( :render_random_rectangles )
+	( :render_random_circles )	
+	( :render_random_filled_circles )
+    ( :render_mandelbrot )
+)
+###
+
+
+( function :file_write_image ( ) :
+	#( "ssd" :print )
+	( $width $IMAGE_FILE ".width" -> = )
+	( $height $IMAGE_FILE ".height" -> = )
+	( $name $IMAGE_FILE ".name" -> = )
+    ( $name "wb" :open_file )
+    ( $len $IMAGE_DATA :len = )
+    ( $height $width "P6\n%li %li\n255\n" :sprintf :file_write_ascii )
+    ( $i 0 = )
+    ( loop ( $i $len < ) :
+		( $IMAGE_DATA $i :get :file_write_binary )
+		( $i ++ )
+	)
+	( :close_file )
+)
+
+( function :file_image_init ( $width $height $name ) :
+	( $IMAGE_FILE [ ] = )
+	( $IMAGE_DATA [ ] = )
+	( $IMAGE_FILE ".width" $width <- )
+	( $IMAGE_FILE ".height" $height <- )
+	( $IMAGE_FILE ".name" $name <- )
+    ( $n $width $height * 3 * = )
+    ( $i 0 = )
+    ( loop ( $i $n < ) : ( $IMAGE_DATA 0 :push ) ( $i ++ ) )
+)
+	
+( function :set_pixel_r ( $y $x $color ) :
+	( $width $IMAGE_FILE ".width" -> = )
+	( $height $IMAGE_FILE ".height" -> = )
+	( if ( $y 0 < $y 1 + $height > $x 0 < $x 1 + $width > or or or ) :
+		( return )
+	)
+	( $IMAGE_DATA $x :int $y :int $width * + 3 * $color :int :set ) 
+)
+
+( function :set_pixel_g ( $y $x $color ) :
+	( $width $IMAGE_FILE ".width" -> = )
+	( $height $IMAGE_FILE ".height" -> = )
+	( if ( $y 0 < $y 1 + $height > $x 0 < $x 1 + $width > or or or ) :
+		( return )
+	)
+	( $IMAGE_DATA $x :int $y :int $width * + 3 * 1 + $color :int :set ) 
+)
+
+( function :set_pixel_b ( $y $x $color ) :
+	( $width $IMAGE_FILE ".width" -> = )
+	( $height $IMAGE_FILE ".height" -> = )
+	( if ( $y 0 < $y 1 + $height > $x 0 < $x 1 + $width > or or or ) :
+		( return )
+	)
+	( $IMAGE_DATA $x :int $y :int $width * + 3 * 2 + $color :int :set ) 
+)
+
+( function :file_write_ascii ( $str ) :
+	( $str 0 :write_file )
+)
+
+( function :file_write_binary ( $str ) :
+	( $str 1 :write_file )
+)
+
+# http://rosettacode.org/wiki/Bitmap/Write_a_PPM_file
+# image: https://imgur.com/lWyqS55
+( function :render_rosetta_example ( ) :
+    ( $width 800 = )
+    ( $height 600 = )
+    ( "render_rosetta_example.ppm" $height $width :file_image_init )
+    ( $y 0 = )
+    ( loop ( $y $height < ) :
+    	( $x 0 = ) 
+		( loop ( $x $width < ) :
+		    ( $x 256 % $x $y :set_pixel_r )
+		    ( $y 256 % $x $y :set_pixel_g )
+		    ( $x $y * 256 % $x $y :set_pixel_b )
+		    ( $x ++ )		    
+		)
+		( $y ++ )
+	)
+	( :file_write_image )
+) 
+
+# image: https://imgur.com/6o3GtsS
+( function :render_sin_example ( ) :
+    ( $width 800 = )
+    ( $height 600 = )
+    ( "render_sin_example.ppm" $height $width :file_image_init )
+    ( $cnt 30 100 :random2 = )
+	( loop ( $cnt 0 > ) :
+		( $color_r 0 255 :random2 = )
+		( $color_g 0 255 :random2 = )
+		( $color_b 0 255 :random2 = )
+    	( $wave 10 255 :random2 = )
+    	( $y_pos 10 $height :random2 = )
+    	( $amplitude 10 $height 2 / :random2 = )
+    	( $i 0 = )
+		( loop ( $i $width < ) :
+			( $x $i = )
+			( $y $x $wave / :sin $amplitude * $y_pos + = )	    
+			( $color_r $x $y :set_pixel_r )
+			( $color_g $x $y :set_pixel_g )
+			( $color_b $x $y :set_pixel_b )
+			( $i 0.25 += )		    
+		)
+		( $cnt -- )
+	)
+	( :file_write_image )
 ) 
 
 ( function :main ( ) :
-	( :render_random_lines )
-	( :render_random_rectangles )
-    ( :render_mandelbrot )
-	( :rosetta_example )
-	( :render_random_circles )	
-	( :render_random_filled_circles )
+	#( :render_rosetta_example )
+	( :render_sin_example )
 )
-

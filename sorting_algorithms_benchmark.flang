@@ -1,0 +1,119 @@
+###
+Sorting algorithms tested
+language: flang
+author: mystikkogames ( mystikkogames@protonmail.com )
+license: GPLv2
+
+Test.
+100 integers shuffled and sorted 1000 times per each algorithm.
+
+Run 1. Compiled with -O3
+bubble_sort: 1000 # 34.198s
+insertion_sort: 1000 # 15.476s
+
+Run 2. Compiled with -O3
+bubble_sort: 1000 # 32.503s
+insertion_sort: 1000 # 14.946s
+
+Run 3. Compiled with -O2
+bubble_sort: 1000 # 32.928s
+insertion_sort: 1000 # 15.055s
+
+Conclusion. insertion sort is ~110% faster than bubble sort.
+###
+
+# shuffle arrays
+( function :shuffle ( $array ) :
+	( $len $array :len = )
+	( $len 0 > :assert )
+	( $i $len 3 * = )
+	( loop ( $i 0 > ) :
+		( $ia 0 $len 1 - :random2 :int = )
+		( $ib 0 $len 1 - :random2 :int = )
+		( $a $array $ia :get = )
+		( $b $array $ib :get = )
+		( $c $a = )
+		( $array $ia $b :set )
+		( $array $ib $c :set )
+		( $i -- )
+	)
+)
+
+# https://en.wikipedia.org/wiki/Bubble_sort
+( function :bubble_sort ( $array ) :
+	( $len $array :len = )
+	( loop ( 1 ) : 
+		( $swapped 0 = )
+		( $i 0 = )
+		( loop ( $i $len 1 - < ) :
+			( $a $array $i :get = )
+			( $b $array $i 1 + :get = )
+			( if ( $b $a < ) :
+				( $swapped 1 = )
+				( $c $a = )
+				( $array $i $b :set )
+				( $array $i 1 + $c :set )
+			)
+			( $i ++ )
+		)
+		( if ( $swapped ! ) :
+			( break )
+		)
+	)
+)
+
+# https://en.wikipedia.org/wiki/Insertion_sort
+( function :insertion_sort ( $array ) :
+	( $len $array :len = )
+	( $i 1 = ) 
+	( loop ( $i $len < ) : 
+		( $j $i = )
+		( loop ( $j 0 > ) :
+			( $va $array $j 1 - :get = )
+			( $vb $array $j :get = )
+			( if ( $va $vb < ) : ( break ) )
+			( $a $array $j :get = )
+			( $b $array $j 1 - :get = )
+			( $c $a = )
+			( $array $j $b :set )
+			( $array $j 1 - $c :set )
+			( $j -- )
+		)
+		( $i ++ )
+	)
+)
+
+( function :test_bubble_sort ( $a $n ) :
+    ( :clock_start )
+	( $i 0 = )
+	( loop ( $i $n < ) : 
+		( $a :shuffle ) 
+    	( $a :bubble_sort )
+		( $i ++ ) 
+	)
+    ( :clock_diff $n "bubble_sort: %li # %.3fs" :printf )
+)
+
+( function :test_insertion_sort ( $a $n ) :
+    ( :clock_start )
+	( $i 0 = )
+	( loop ( $i $n < ) : 
+		( $a :shuffle ) 
+    	( $a :insertion_sort )
+		( $i ++ ) 
+	)
+    ( :clock_diff $n "insertion_sort: %i # %.3fs" :printf )
+)
+
+( function :bubble_vs_insertion_sorts ( ) :
+    ( $a [ ] = )
+	( $i 0 = )
+	( loop ( $i 100 < ) : ( $a $i :push ) ( $i ++ ) )
+	( $n 1000 = )
+	( $n $a :test_bubble_sort )
+	( $n $a :test_insertion_sort )   
+)
+
+( function :main ( ) :
+	( :bubble_vs_insertion_sorts )
+)

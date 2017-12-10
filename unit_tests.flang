@@ -1,203 +1,145 @@
 ###
 Unit tests for flang - language
- language: flang ( v. 0.87 )
+ language: flang
  author: mystikkogames ( mystikkogames@protonmail.com )
  license: GPLv2
 ###
 
-( include "euler_problems.flang" )
 ( include "string.flang" )
 
 ( function :flang_unit_tests ( ) :
     
     # POSITIVE
     
-    ( "a b c d e f " :string_remove_whitespace "abcdef" == *assert )
-    ( " " :string_is_whitespace *assert )
+    ( "a b c d e f " :string_remove_whitespace "abcdef" == :assert )
+    ( " " :string_is_whitespace :assert )
     
-    ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" *regex_match *assert )    
-    ( "sdf 012dfdsf" "/[0-9]{3}/" *regex_match *assert )    
-    ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" *regex_match *assert )    
-    ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match *assert )    
+    ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" :regex_match :assert )    
+    ( "sdf 012dfdsf" "/[0-9]{3}/" :regex_match :assert )    
+    ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
+    ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
+  
+    ( $o ["r": 24, "g": 33, "b": 55, "x": 22, "y": 42] = ) 
+    ( $o ".g" -> 33 == :assert )
+    ( $o ".y" -> 42 == :assert )
+    ( $o ".x" -> 22 == :assert )
 
-    ( "{'name': 'mystikkogames'}" ".name" *json_read "mystikkogames" == *assert )    
-    ( "{'name': {'value': ['1','2','3','mystikkogames']}" ".name.value[3]" *json_read "mystikkogames" == *assert )
-    
-    ( $var *array_new = )
-    ( $var "12" *array_push )
-    ( $var "345" *array_push )
-    ( $var "6" *array_push )
-    ( $var "7" *array_push )
-    ( $var "89" *array_push )
-    ( $var *array_length 5 == *assert )
-    ( $var 1 *array_get "345" == *assert )
-    ( $var 0 *array_get "12" == *assert )
-    ( $var $var *array_pop = )
-    ( $var *array_length 4 == *assert )
-    ( $var $var *array_pop = )
-    ( $var *array_length 3 == *assert )
-    
-    ( $o "{'r': '24', 'g': '33', 'b': '55', 'x': '22', 'y': '42'}" = ) 
-    ( $o ".g" *json_read 33 == *assert )
-    ( $o ".y" *json_read 42 == *assert )
-    ( $o ".x" *json_read 22 == *assert )
 
-    ( $o ".x" "125" *json_write ) 
-    ( $o ".x" *json_read "125" == *assert )
+    ( $o ".x" 125 <-  ) 
+    ( $o ".x" -> 125 == :assert )
 
-    ( $o ".x" *json_read "125" == *assert )
+	
+    ( "abcdef" "bcd" :contain :assert )
+    ( "abcde484f" "484" :contain :assert )
 
-    ( "abcdef" "bcd" *contains *assert )
-    ( "abcde484f" "484" *contains *assert )
+    ( $var [ "name": "mystikkogames" ] = ) 
+    ( $var ".name" 42 <- )
+    ( $var ".name" -> 42 == :assert )
 
-    ( $var "{'name': 'mystikkogames'}" = ) 
-    ( $var ".name" "42" *json_write )
-    ( $var ".name" *json_read "42" == *assert )
     
     ( $multiply_by_2 ( lambda ( $num ) : ( $num 2 * ) ) = )
-    ( 7 :$multiply_by_2 14 == *assert )
-    ( 21 :$multiply_by_2 42 == *assert )
+    ( 7 :$multiply_by_2 14 == :assert )
+    ( 21 :$multiply_by_2 42 == :assert )
     ( $var2 $multiply_by_2 = )
-    ( 21 :$var2 42 == *assert )
+    ( 21 :$var2 42 == :assert )
 
     ( $cruncher ( lambda ( $func1 $func2 ) : ( $a :$func1 = ) ( $b :$func2 = ) ( if ( $a $b > ) : ( $a ) else : ( $b ) ) ) = )
     # We can pass lambdas as arguments to functions!
-    ( ( lambda ( ) : ( 11 ) ) ( lambda ( ) : ( 42 ) ) :$cruncher 42 == *assert )
-    
-    ( "123.12" *is_number *assert )
-    
-    ( "-0.12" *is_number *assert )
-    
-    ( 10000 *prime_nth 104743 == *assert )
-    
-    ( "1" *assert )
-    
-    ( "..." *assert )
-    
-    ( "0.0" *assert )
+    ( ( lambda ( ) : ( 11 ) ) ( lambda ( ) : ( 42 ) ) :$cruncher 42 == :assert )
+        
+    ( "1" :assert )    
+    ( "..." :assert )    
+    ( "0.0" :assert )
         
    	( $var 42 = )
    	( if ( 1 ) : ( $var 142 = ) )
-    ( $var 142 == *assert )
+    ( $var 142 == :assert )
    	
    	( $var 42 = )
    	( if ( 0 ) : ( $var 0 = ) else : ( $var 111 = ) )
-    ( $var 111 == *assert )
+    ( $var 111 == :assert )
 
    	( $var 42 = )
    	( if ( 0 ) : ( $var 0 = ) elif ( 1 ) : ( $var 19 = ) else : ( $var 111 = ) )
-    ( $var 19 == *assert )
+    ( $var 19 == :assert )
     
    	( $var 42 = )
    	( $var 10 %= )
-   	( $var 2 == *assert )
+   	( $var 2 == :assert )
 
    	( $var 42 = )
    	( $var 2 %= )
-   	( $var 0 == *assert )
+   	( $var 0 == :assert )
 
    	( $var 42 = )
    	( $var 2 -= )
-   	( $var 40 == *assert )
+   	( $var 40 == :assert )
 
    	( $var 42 = )
    	( $var 44 -= )
-   	( $var -2 == *assert )
+   	( $var -2 == :assert )
 
    	( $var 42 = )
    	( $var 2 += )
-   	( $var 44 == *assert )
+   	( $var 44 == :assert )
 
    	( $var 42 = )
    	( $var 2 /= )
-   	( $var *int 21 == *assert )
+   	( $var :int 21 == :assert )
 
    	( $var 42 = )
    	( $var 42 /= )
-   	( $var *int 1 == *assert )
+   	( $var :int 1 == :assert )
 
    	( $var 42 = )
    	( $var 2 *= )
-   	( $var 84 == *assert )
+   	( $var 84 == :assert )
 
    	( $var 42 = )
    	( $var -2 *= )
-   	( $var -84 == *assert )
+   	( $var -84 == :assert )
 
    	( $var 42 = )
    	( $var ++ )
-   	( $var 43 == *assert )
+   	( $var 43 == :assert )
 
    	( $var 42 = )
    	( $var -- )
-   	( $var 41 == *assert )
+   	( $var 41 == :assert )
     
    	( $var 100 = )
    	( $var 10 -= )
-    ( $var 90 == *assert )
+    ( $var 90 == :assert )
     
    	( $var 100 = )
    	( $var 10 += )
-    ( $var 110 == *assert )
+    ( $var 110 == :assert )
     
-   	( 100 *resize_salong )
-   	( *reset_salong )
-   	( 0 21 *set_salong )
-   	( 1 42 *set_salong )
-   	( 2 4431 *set_salong )
-    ( 1 *get_salong 42 == *assert )
     
-   	( $$IAMGLOBAL 42 = )
-   	( $$IAMGLOBAL 42 == *assert )
+   	( $IAMGLOBAL 42 = )
+   	( $IAMGLOBAL 42 == :assert )
    	
-   	( 100 *resize_sadouble )
-   	( *reset_sadouble )
-   	( 0 21.2 *set_sadouble )
-   	( 1 42.12 *set_sadouble )
-   	( 2 44.31 *set_sadouble )
-    ( 1 *get_sadouble 2 *precision 42.12 == *assert )
-   	
-    ( $a *array_new = )
-    ( $a "12" *array_push )
-    ( $a "12]6%3" *array_push )
-    ( $a "1sdf2" *array_push )
-    ( $a "42" *array_push )
-    ( $a "12" *array_push )
-    ( $a *array_length 5 == *assert )
-    ( $a 3 *array_get 42 == *assert )
-    
-    ( 0 *sin 0.1 < *assert )
-    ( 0 *cos 0.9 > *assert )
+    ( 0 :sin 0.1 < :assert )
+    ( 0 :cos 0.9 > :assert )
 
     # NEGATIVE
+
+    ( "0" ! :assert ) # Only "0" is false in flang. Everything else is true! 
+
+    ( "abcde484f" "000" :contain ! :assert )
+    ( "abcde123123484f" "trim" :contain ! :assert )
+
+    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match ! :assert )    
+    ( "sdf 012dfdsf" "/[0-9]{4}/" :regex_match ! :assert )
         
-    ( "0" ! *assert ) # Only "0" is false in flang. Everything else is true! 
-
-    ( "abcde484f" "000" *contains ! *assert )
-    ( "abcde123123484f" "trim" *contains ! *assert )
-
-    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" *regex_match ! *assert )    
-    ( "sdf 012dfdsf" "/[0-9]{4}/" *regex_match ! *assert )
-    
-    ( "-as0.12" *is_number ! *assert )    
-    ( "-0.1ad2" *is_number ! *assert )
-    
 )
 
 ( function :main ( ) :
 
 	# flang unit tests # 0.055s
-    ( *clock_start )
+    ( :clock_start )
     ( :flang_unit_tests )
-    ( "flang unit tests # " *clock_diff_nice *join *print )
-
-	# Euler unit tests # 52.773s
-    ( *clock_start )
-    ( :euler_unit_tests )
-    ( "Euler unit tests # " *clock_diff_nice *join *print )
-	
-    #( "flang total # " *clock_total_nice *join *print )
-    #( *clock_diff_nice *print )
-    #( "flang unit tests # "*clock_diff 3 *precision *join "s" *join *print )
+    ( :clock_diff "flang unit tests # %.3fs" :printf )
 
 )
+
