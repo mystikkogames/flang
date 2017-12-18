@@ -1,8 +1,8 @@
 ###
 Unit tests for flang - language
- language: flang
- author: mystikkogames ( mystikkogames@protonmail.com )
- license: GPLv2
+language: flang
+author: mystikkogames ( mystikkogames@protonmail.com )
+license: GPLv2
 ###
 
 ( include "utils.flang" )
@@ -28,13 +28,17 @@ Unit tests for flang - language
 
     ( $o [ 1, 5, "some": [ 2, 4] ] = ) 
     ( $o ".some.0" -> 2 == :assert )
-    ( $o ".some.0" 112 <- )
     ( $o ".length" 112 <- )
-    ( $o :flat :print )
-    
-    
-    
-    
+    ( $o ".length" -> 112 == :assert )    
+        
+   	# How to read and write files in flang!
+    ( $filename "temp.txt" = )
+    ( $file $filename "w" :file_open = )
+    ( $file "this is a test!" :fprintf )
+	( $file :file_close )
+    ( $data $filename :file_read = ) 
+    ( $data "this is a test!" == :assert )	
+	
     ( $o [] = ) 
     ( $o ".x" 125 <-  ) 
     ( $o ".x" -> 125 == :assert )
