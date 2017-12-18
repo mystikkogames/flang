@@ -6,26 +6,25 @@ flang - a functional language
   3. Functional design.
 
  ( Very ) short guide
-  - Variables: $myvar
-  - Globals: $GLOBAL
-  - Constants: $$MYCONST
-  - Singleline comments: #
-  - Multiline comments: ### -> ###
+  - variables: $myvar
+  - globals: $GLOBAL
+  - constants: $$MYCONST
+  - singleline comments: #
+  - multiline comments: ### -> ###
   - break: breaks loop
   - continue: continues loop from start
   - include: Includes file at the top.
   - const: Creates a constant. Can't use that as a variable!
-  - Types: No types. Everything is a string!
-  - Boolean: "0" is false. Everything else is true. It's that simple!
-  - loop: ( loop ( expr ) : ( statement ) ... )
-  - if: ( if ( expr ) : ( statement ) ... 
-   elif ( expr ) : ( statement ) ... else : ( statement ) ...  )
-  - lambda: ( lambda ( $arg? ... ) : ( statement ) ... )
-  - function: ( function :yourfunc ( $arg? ... ) : ( statement ) ... )
-  - Function calls: :max
-  - Set value: ( $var 42 = )
+  - types: No types. Everything is a string!
+  - boolean: "0" is false. Everything else is true. It's that simple!
+  - loop: ( loop ( expr ) : ( stmt ) ... )
+  - if: ( if ( expr ) : ( stmt ) ... )
+  - lambda: ( lambda ( $arg? ... ) : ( stmt ) ... )
+  - function: ( function :yourfunc ( $arg? ... ) : ( stmt ) ... )
+  - function calls: :max
+  - fet value: ( $var 42 = )
   - self: refers to current function/lambda
-  - ++ / -- / += / -= / *= ...: Make code simpler and faster.
+  - ++ / -- / += / -= / *= ...: Code simpler and faster.
   - ...
 
  Random facts about flang
@@ -124,3 +123,7 @@ flang - a functional language
    - Huge cleanup
    - sa_doubles etc are gone for good
    - fobj is the new dataholder
+   
+  - 0.90
+   - Cleanups and bug fixes
+   - :abs :ceil and other basic functions added

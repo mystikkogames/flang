@@ -1,0 +1,326 @@
+###
+String functions written in flang - language
+Only include what you need!
+language: flang
+author: mystikkogames ( mystikkogames@protonmail.com )
+license: GPLv2
+###
+
+( const $$PI 3.14159 )
+
+
+
+
+
+
+
+
+
+
+# string
+
+( function :chr ( $i ) : ( $i "%c" :sprintf ) )
+( function :join ( $a $b ) : ( $a $b "%s%s" :sprintf ) )
+
+( function :is_whitespace ( $c ) :
+	( if ( $c " " == ) : ( 1 ) ( return )
+	elif ( $c "\t" == ) : ( 1 ) ( return )
+	elif ( $c "\n" == ) : ( 1 ) ( return )
+	)
+	( 0 ) 
+)
+
+# depency: :is_whitespace
+( function :remove_whitespace ( $s ) :
+	( $len $s :strlen = )
+	( $i 0 = )
+	( $ret "" = )
+    ( loop ( $i $len < ) : 
+    	( $ch $s $i :at = )
+    	( if ( $ch :is_whitespace ! ) :
+    		( $ret $ret $ch :join = )
+    	)
+    	( $i ++ )
+    )
+    ( $ret )
+)
+
+
+
+
+
+
+
+
+
+
+
+
+# math
+
+( function :is_prime ( $prime ) :   
+	( $i 2 = ) 
+	( if ( $prime 2 < ) : ( 0 ) ( return ) )
+	( loop ( $i $i * $prime < ) :
+		( if ( $prime $i % 0 == ) : 
+			( 0 )
+			( return )
+		) 
+		( $i ++ )
+	)
+	( 1 )
+)
+
+# Initialize:
+# ( $PRIMES [ 2, 3 ] = )
+( function :prime_nth ( $i ) :   
+    ( $i 0 >= :assert )
+    ( if ( $i $PRIMES :len < ) :
+    	( $PRIMES $i :get )
+        ( return )
+    )
+    ( loop ( $PRIMES :len $i <= ) : 
+        ( $candidate $PRIMES $PRIMES :len 1 - :get = )
+        ( loop ( 1 ) :
+            ( $success 1 = )
+            ( $candidate ++ )
+            ( $k 0 = )
+            ( $len $PRIMES :len = )
+            ( loop ( $k $len < ) :
+            	( $t $PRIMES $k :get = )
+            	( if ( $t $t * $candidate > ) :
+            		( break )
+            	)
+            	( if ( $candidate $PRIMES $k :get % 0 == ) :
+                    ( $success 0 = )
+                    ( break )
+               	)
+               	( $k ++ )
+          	)
+            ( if ( $success ) :
+                ( $PRIMES $candidate :push )
+                ( break )
+          	)
+     	)
+  	)
+    ( $PRIMES $i :get )
+)
+
+
+
+
+
+
+
+
+
+
+# gfx 
+
+( function :gfx_random_color ( $o ) :
+    ( $o ".r" 0 256 :random :floor <- )
+    ( $o ".g" 0 256 :random :floor <- )
+    ( $o ".b" 0 256 :random :floor <- )
+)
+
+( function :gfx_render_filled_circle ( $o ) :
+    ( $x $o ".x" -> = )
+    ( $y $o ".y" -> = )
+    ( $radius $o ".radius" -> = )
+    ( $r $o ".r" -> = )
+    ( $g $o ".g" -> = )
+    ( $b $o ".b" -> = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )
+    ( $angle 0 = )
+    ( $end_x $x $radius + = )
+    ( $end_y $y $radius + = )
+    ( $y2 $y $radius - = )
+    ( loop ( $y2 $end_y < ) : 
+        ( $x2 $x $radius - = )
+        ( loop ( $x2 $end_x < ) : 
+            ( if ( $x2 $x - 2 :pow $y2 $y - 2 :pow + $radius $radius * < $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and and ) :            
+				( $x2 :image_set_x ) 
+				( $y2 :image_set_y ) 
+				( $r :image_set_r )
+				( $g :image_set_g )
+				( $b :image_set_b )
+            )
+            ( $x2 ++ )
+        )
+        ( $y2 ++ )
+    )
+)
+
+( function :gfx_render_circle ( $o ) :
+    ( $x $o ".x" -> = )
+    ( $y $o ".y" -> = )
+    ( $radius $o ".radius" -> = )
+    ( $r $o ".r" -> = )
+    ( $g $o ".g" -> = )
+    ( $b $o ".b" -> = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )
+    ( $angle 0 = )
+    ( $i 0 = )
+    ( loop ( $angle $$PI 2 * <= ) : 
+        ( $x2 $x $angle :cos $radius * + :floor = )
+        ( $y2 $y $angle :sin $radius * + :floor = )
+        ( if ( $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and ) :
+			( $x2 :image_set_x ) 
+			( $y2 :image_set_y ) 
+			( $r :image_set_r )
+			( $g :image_set_g )
+			( $b :image_set_b )
+        )
+        ( $angle 0.001 += )
+        ( $i ++ )
+    )
+)
+
+( function :gfx_render_filled_rectangle ( $o ) :
+    ( $x $o ".x" -> = )
+    ( $y $o ".y" -> = )
+    ( $w $o ".w" -> = )
+    ( $h $o ".h" -> = )
+    ( $end_x $x $w + = )
+    ( $end_y $y $h + = )
+    ( $r $o ".r" -> = )
+    ( $g $o ".g" -> = )
+    ( $b $o ".b" -> = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )
+    ( $angle 0 = )
+    ( loop ( $y $end_y < ) : 
+        ( $tx $x = )
+        ( loop ( $tx $end_x < ) : 
+            ( if ( $tx $width < $y $height < and ) :
+				( $tx :image_set_x ) 
+				( $y :image_set_y ) 
+				( $r :image_set_r )
+				( $g :image_set_g )
+				( $b :image_set_b )
+	        )
+            ( $tx ++ )
+        )
+        ( $y ++ )
+    )
+)
+
+( function :gfx_render_line ( $o ) :
+    ( $x $o ".x" -> = )
+    ( $y $o ".y" -> = )
+    ( $x2 $o ".x2" -> = )
+    ( $y2 $o ".y2" -> = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )
+    ( $len $x $x2 - 2 :pow $y $y2 - 2 :pow + :sqrt = )
+    ( $len :assert )
+    ( $dx $x $x2 - $len / = )
+    ( $dy $y $y2 - $len / = )
+    ( $step 1 $len / = )
+    ( $r $o ".r" -> = )
+    ( $g $o ".g" -> = )
+    ( $b $o ".b" -> = )
+    ( $i 0 = )
+    ( loop ( $i $len < ) : 
+   		( $x3 $x $dx $i * + = )
+   		( $y3 $y $dy $i * + = )
+        ( if ( $x3 0 >= $x3 $width < and $y3 0 >= $y3 $height < and and ) :
+			( $x3 :image_set_x ) 
+			( $y3 :image_set_y ) 
+			( $r :image_set_r )
+			( $g :image_set_g )
+			( $b :image_set_b )
+		)
+      	( $i ++ )
+    )
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# image
+
+( function :file_write_image ( ) :
+	( $w $IMAGE_FILE ".w" -> = )
+	( $h $IMAGE_FILE ".h" -> = )
+	( $name $IMAGE_FILE ".name" -> = )
+    ( $file $name "wb" :file_open = )
+    ( $len $IMAGE_DATA :len = )
+    ( $file $h $w "P6\n%li %li\n255\n" :fprintf )
+    ( $i 0 = )
+    ( loop ( $i $len < ) :
+		( $file $IMAGE_DATA $i :get 1 :fwrite )
+		( $i ++ )
+	)
+	( $file :file_close )
+)
+
+( function :image_init ( ) :
+	# No resetting. Just make a new array each time!
+	( $IMAGE_FILE [ ] = )
+	( $IMAGE_DATA [ ] = )
+)
+
+( function :image_set_width ( $w ) : ( $IMAGE_FILE ".w" $w <- ) )
+
+( function :image_set_height ( $h ) : ( $IMAGE_FILE ".h" $h <- ) )
+
+( function :image_set_name ( $n ) : ( $IMAGE_FILE ".name" $n <- ) )
+
+( function :image_reset_data ( ) : 
+	( $w $IMAGE_FILE ".w" -> :floor = )
+	( $h $IMAGE_FILE ".h" -> :floor = )
+	( $n $w $h 3 * * = )
+    ( $i 0 = )
+    ( loop ( $i $n < ) : ( $IMAGE_DATA 0 :push ) ( $i ++ ) )
+)
+
+( function :image_set_x ( $x ) : ( $IMAGE_FILE ".x" $x <- ) )
+
+( function :image_set_y ( $y ) : ( $IMAGE_FILE ".y" $y <- ) )
+
+( function :image_set_r ( $color_r ) :
+	( $x $IMAGE_FILE ".x" -> :floor = )
+	( $y $IMAGE_FILE ".y" -> :floor = )
+	( $w $IMAGE_FILE ".w" -> :floor = )
+	( $h $IMAGE_FILE ".h" -> :floor = )
+	( if ( $y 0 < $y $h >= $x 0 < $x $w >= or or or ) :
+		( return )
+	)
+	( $IMAGE_DATA $x $y $w * + 3 * $color_r :floor 256 % :set ) 
+)
+
+( function :image_set_g ( $color_g ) :
+	( $x $IMAGE_FILE ".x" -> :floor = )
+	( $y $IMAGE_FILE ".y" -> :floor = )
+	( $w $IMAGE_FILE ".w" -> :floor = )
+	( $h $IMAGE_FILE ".h" -> :floor = )
+	( if ( $y 0 < $y $h >= $x 0 < $x $w >= or or or ) :
+		( return )
+	)
+	( $IMAGE_DATA $x $y $w * + 3 * 1 + $color_g :floor 256 % :set ) 
+)
+
+( function :image_set_b ( $color_b ) :
+	( $x $IMAGE_FILE ".x" -> :floor = )
+	( $y $IMAGE_FILE ".y" -> :floor = )
+	( $w $IMAGE_FILE ".w" -> :floor = )
+	( $h $IMAGE_FILE ".h" -> :floor = )
+	( if ( $y 0 < $y $h >= $x 0 < $x $w >= or or or ) :
+		( return )
+	)
+	( $IMAGE_DATA $x $y $w * + 3 * 2 + $color_b :floor 256 % :set ) 
+) 

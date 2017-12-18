@@ -5,37 +5,79 @@ Unit tests for flang - language
  license: GPLv2
 ###
 
-( include "string.flang" )
+( include "utils.flang" )
 
 ( function :flang_unit_tests ( ) :
     
     # POSITIVE
-    
-    ( "a b c d e f " :string_remove_whitespace "abcdef" == :assert )
-    ( " " :string_is_whitespace :assert )
+          
+    ( "1 2 3 4 5 6 " :remove_whitespace "123456" == :assert )
+    ( "a b c d e f " :remove_whitespace "abcdef" == :assert )
+    ( " " :is_whitespace :assert )
     
     ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" :regex_match :assert )    
     ( "sdf 012dfdsf" "/[0-9]{3}/" :regex_match :assert )    
     ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
     ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
   
-    ( $o ["r": 24, "g": 33, "b": 55, "x": 22, "y": 42] = ) 
+    ( $o ["r": 24, "g": 33, "b": 55, "x": 22, "y": 42, "cells": [2, 5, 42]] = ) 
     ( $o ".g" -> 33 == :assert )
     ( $o ".y" -> 42 == :assert )
     ( $o ".x" -> 22 == :assert )
+    ( $o ".cells.2" -> 42 == :assert )
 
-
+    ( $o [ 1, 5, "some": [ 2, 4] ] = ) 
+    ( $o ".some.0" -> 2 == :assert )
+    ( $o ".some.0" 112 <- )
+    ( $o ".length" 112 <- )
+    ( $o :flat :print )
+    
+    
+    
+    
+    ( $o [] = ) 
     ( $o ".x" 125 <-  ) 
     ( $o ".x" -> 125 == :assert )
 
+    ( 25 :sqrt 5 - :abs 0.1 < :assert ) 
+    ( 100 :sqrt 10 - :abs 0.1 < :assert ) 
+    
+    ( -100 :abs 100 == :assert ) 
+    ( 100 :abs 100 == :assert ) 
+        
+    ( 2 :floor 2 == :assert ) 
+    ( 2.4 :floor 2 == :assert )    
+    ( 2.9 :floor 2 == :assert )    
+    ( -2.7 :floor -3 == :assert )  
+    ( -2 :floor -2 == :assert )
+    
+    ( 2 :ceil 2 == :assert )
+    ( 2.4 :ceil 3 == :assert )
+    ( 2.9 :ceil 3 == :assert )
+    ( -2.7 :ceil -2 :assert ) 
+    ( -2 :ceil -2 :assert ) 
+         
+    ( $var "abc" = ) 
+    ( $var2 "def" = ) 
+    ( $var $var2 :join "abcdef" == :assert ) 
+    ( "abc" "def" :join "abcdef" == :assert )    
+    ( "mystikko" "games" :join "mystikkogames" == :assert )    
+    ( "123" "321" :join "123321" == :assert )     
 	
     ( "abcdef" "bcd" :contain :assert )
     ( "abcde484f" "484" :contain :assert )
 
+    ( $var [] = ) 
+    ( $var 1 :push ) 
+    ( $var 2 :push ) 
+    ( $var 3 :push ) 
+    ( $var 42 :push ) 
+    ( $var 3 :get 42 == :assert )
+    ( $var :len 4 == :assert )
+    
     ( $var [ "name": "mystikkogames" ] = ) 
     ( $var ".name" 42 <- )
     ( $var ".name" -> 42 == :assert )
-
     
     ( $multiply_by_2 ( lambda ( $num ) : ( $num 2 * ) ) = )
     ( 7 :$multiply_by_2 14 == :assert )
@@ -85,11 +127,11 @@ Unit tests for flang - language
 
    	( $var 42 = )
    	( $var 2 /= )
-   	( $var :int 21 == :assert )
+   	( $var :floor 21 == :assert )
 
    	( $var 42 = )
    	( $var 42 /= )
-   	( $var :int 1 == :assert )
+   	( $var :floor 1 == :assert )
 
    	( $var 42 = )
    	( $var 2 *= )
@@ -114,8 +156,7 @@ Unit tests for flang - language
    	( $var 100 = )
    	( $var 10 += )
     ( $var 110 == :assert )
-    
-    
+        
    	( $IAMGLOBAL 42 = )
    	( $IAMGLOBAL 42 == :assert )
    	
@@ -136,7 +177,6 @@ Unit tests for flang - language
 
 ( function :main ( ) :
 
-	# flang unit tests # 0.055s
     ( :clock_start )
     ( :flang_unit_tests )
     ( :clock_diff "flang unit tests # %.3fs" :printf )

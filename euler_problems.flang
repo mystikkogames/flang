@@ -5,8 +5,7 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
  license: GPLv2
 ###
 
-( include "string.flang" )
-( include "math.flang" )
+( include "utils.flang" )
 
 ( function :euler_1 ( ) :
     ( $sum 0 = )
@@ -41,7 +40,7 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
     ( $n 2 = )
     ( $biggest_factor 0 = )
 	( loop ( $n $bignum 1 + < ) :
-		( if ( $n :math_is_prime $bignum $n % 0 == and ) :
+		( if ( $n :is_prime $bignum $n % 0 == and ) :
 		    ( $bignum $n /= )
 		    ( $biggest_factor $biggest_factor $n :max = )
         )
@@ -108,13 +107,14 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
 )
 
 ( function :euler_7 ( ) :   	
-	( 10000 :math_prime_nth )
+	( 10000 :prime_nth )
 )
 
 ( function :euler_8 ( ) :   
-    ( $f "data.json" :read_file  = )
+    ( $f "data.json" :file_read  = )
     ( $data $f :fobj_compile ".euler_8" -> = ) 
-    ( $str $data :string_remove_whitespace = )
+    ( $str $data :remove_whitespace = )
+    #( "sss" :print = )
     ( $len $str :strlen = )
     ( $i 0 = )
     ( $maximum 0 = )
@@ -138,7 +138,7 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
         ( loop ( $b 1000 < ) :
                 ( $sum $a $a * $b $b * + = )
                 ( $c 1000 $a $b + - = )
-                ( if ( $c $b > $c 2 :pow :int $sum == and ) :
+                ( if ( $c $b > $c 2 :pow :floor $sum == and ) :
                 	( 1000 $a $b + - $a $b * * ) 
                 	( return )        
                 )
@@ -156,7 +156,7 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
     ( $prime 0 = )
     ( loop ( $prime 2000000 < ) :
         ( $sum $prime += )
-        ( $prime $i :math_prime_nth = ) 
+        ( $prime $i :prime_nth = ) 
         ( $i ++ )
     )
     ( $sum )
@@ -164,8 +164,8 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
 
 
 ( function :euler_11 ( ) :   
-    ( $data "data.json" :read_file :fobj_compile =  ) 
-    ( $str $data ".euler_11" -> :string_remove_whitespace = )
+    ( $data "data.json" :file_read :fobj_compile =  ) 
+    ( $str $data ".euler_11" -> :remove_whitespace = )
     ( $x 0 = )
     ( $maximum 0 = )
     ( loop ( $x 16 < ) :
@@ -231,19 +231,19 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
 ( function :euler_12 ( ) :   
 	( $i 0 = )
 	( loop ( 1 ) :
-		( $sum2 $i $i 1 + * 2 / :int = )
+		( $sum2 $i $i 1 + * 2 / :floor = )
 		( $sum $sum2 = )
-		( $prime 0 :math_prime_nth = )
+		( $prime 0 :prime_nth = )
 		( $k 0 = )
 		( $count 1 = )
 		# We can do this speedup since factorization primes are small
 		# should verify propably
 		( loop ( $prime $prime $prime * * $sum <= ) :
 			( $factors 0 = )
-			( $prime $k :math_prime_nth = )		
+			( $prime $k :prime_nth = )		
 			( $sum3 $sum = )	
 			( loop ( $sum3 $prime % 0 == ) :	
-				( $sum3 $sum3 $prime / :int = )			
+				( $sum3 $sum3 $prime / :floor = )			
 				( $factors ++ )
 			)			
 			( $k ++ )
@@ -259,8 +259,8 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
 
 # Good old brute force in action
 ( function :euler_13 ( ) :
-    ( $data "data.json" :read_file :fobj_compile = ) 
-    ( $bigdata $data ".euler_13" -> :string_remove_whitespace = )
+    ( $data "data.json" :file_read :fobj_compile = ) 
+    ( $bigdata $data ".euler_13" -> :remove_whitespace = )
     ( $x 49 = )
     ( $sum "" = )
     ( $leftover 0 = )
@@ -271,7 +271,7 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
             ( $y ++ )
         )
         ( $sum $leftover 10 % $sum :join = )
-        ( $leftover $leftover 10 / :int = )
+        ( $leftover $leftover 10 / :floor = )
         ( $x -- )
     )
     ( $sum $leftover $sum :join = )
@@ -299,7 +299,7 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
         ( $n 0 = )
         ( loop ( $number 1 > $number $i >= and ) :
         	( if ( $number 2 % 0 == ) : 
-        		( $number $number 2 / :int = ) 
+        		( $number $number 2 / :floor = ) 
         	else : 
         		( $number $number 3 * 1 + = ) 
         	)
@@ -412,10 +412,10 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
             ( $tmp $n 0 :at :$num_words = )
             ( $res $res $tmp :join "hundred" :join = ) 
             ( $n $n 1 3 :slice = ) 
-            ( $n $n :int = )
-            ( if ( $n :int ) : ( $res $res "and" :join = ) )
+            ( $n $n :floor = )
+            ( if ( $n :floor ) : ( $res $res "and" :join = ) )
         )
-        ( $n $n :int = ) # cleanup because we might have ugly 01 / 06 ...
+        ( $n $n :floor = ) # cleanup because we might have ugly 01 / 06 ...
         ( if ( $n :strlen 2 <= ) :
             ( if ( $n 21 < ) : 
             ( $res $res $n :$num_words :join = ) 
@@ -444,12 +444,12 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
             "75114701133287773177839681757917152381714914358502729486366046889536730731669874031046298272309709873933853600423" :join = )
         # 0.5 * ( n + 1 ) * ( n )
         # 0 => 0 / 1 => 1 / 2 => 3 / 3 => 6 / 4 => 10 / ...
-        ( $start 0.5 $y 1 + $y * * :int 2 * = )
+        ( $start 0.5 $y 1 + $y * * :floor 2 * = )
         ( $max 0 = )
         ( $pnt $start $x 2 * + = )
         ( $num $s $pnt :at = )
         ( $num $num $s $pnt 1 + :at :join = )
-        ( $num $num :int = )
+        ( $num $num :floor = )
         ( $tmp $a $pnt :get = )	
         ( if ( $tmp  ) : 
              ( $max $max $tmp $num + :max = )
@@ -497,34 +497,130 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
     ( $sum_of_products  )
 )
 
-( function :euler_unit_tests ( ) :
+( function :euler_unit_tests ( ) :    
+    ( $t :clock_diff = )
   	( :euler_1 233168 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_1 # %.3fs" :printf )  	
+    
+    ( $t :clock_diff = )
     ( :euler_2 4613732 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_2 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_3 6857 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_3 # %.3fs" :printf )  	
+    
+    ( $t :clock_diff = )
     ( :euler_4 906609 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_4 # %.3fs" :printf )  	
+    
+    ( $t :clock_diff = )
     ( :euler_5 232792560 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_5 # %.3fs" :printf )  	
+    
+    ( $t :clock_diff = )
     ( :euler_6 25164150 == :assert )    
-    ( :euler_7 104743 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_6 # %.3fs" :printf )  	
+    
+    ( $t :clock_diff = )
+    ( :euler_7 104743 == :assert )    
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_7 # %.3fs" :printf )  	
+    
+    ( $t :clock_diff = )
     ( :euler_8 23514624000 == :assert )    
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_8 # %.3fs" :printf )  	
+    
+    ( $t :clock_diff = )
     ( :euler_9 31875000 == :assert )    
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_9 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_10 142913828922 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_10 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_11 70600674 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_11 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_12 76576500 == :assert ) 
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_12 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_13 5537376230 == :assert ) 
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_13 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_14 837799 == :assert ) 
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_14 # %.3fs" :printf )  
+  	
+    ( $t :clock_diff = )
     ( :euler_15 137846528820 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_15 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_16 1366 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_16 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_17 21124 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_17 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_18 1074 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_18 # %.3fs" :printf )  	
+  	
+    ( $t :clock_diff = )
     ( :euler_32 45228 == :assert )    
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_32 # %.3fs" :printf )  
 )
 
-# Run file only
+###
+euler_1 # 0.003s
+euler_2 # 0.001s
+euler_3 # 0.154s
+euler_4 # 0.032s
+euler_5 # 0.005s
+euler_6 # 0.000s
+euler_7 # 2.892s
+euler_8 # 0.038s
+euler_9 # 0.927s
+euler_10 # 117.065s
+euler_11 # 0.019s
+euler_12 # 4.301s
+euler_13 # 0.078s
+euler_14 # 25.674s
+euler_15 # 2.080s
+euler_16 # 0.770s
+euler_17 # 0.025s
+euler_18 # 2.180s
+euler_32 # 2.608s
+euler problems # 158.854s
+###
 ( function :main ( ) : 
-	# init global primes array for :math_prime_nth
+	# init global primes array for :prime_nth
     ( $PRIMES [ 2, 3 ] = )    
     ( :clock_start )
 	( :euler_unit_tests ) 
-    ( :clock_diff "flang unit tests # %.3fs" :printf )
+    ( :clock_diff "euler problems # %.3fs" :printf )
 )
 
