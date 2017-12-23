@@ -1,5 +1,5 @@
 ###
-Unit tests for flang - language
+Unit tests
 language: flang
 author: mystikkogames ( mystikkogames@protonmail.com )
 license: GPLv2
@@ -8,9 +8,6 @@ license: GPLv2
 ( include "utils.flang" )
 
 ( function :flang_unit_tests ( ) :
-    
-    # POSITIVE
-          
     ( "1 2 3 4 5 6 " :remove_whitespace "123456" == :assert )
     ( "a b c d e f " :remove_whitespace "abcdef" == :assert )
     ( " " :is_whitespace :assert )
@@ -20,6 +17,9 @@ license: GPLv2
     ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
     ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
   
+    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match ! :assert )    
+    ( "sdf 012dfdsf" "/[0-9]{4}/" :regex_match ! :assert )
+    
     ( $o ["r": 24, "g": 33, "b": 55, "x": 22, "y": 42, "cells": [2, 5, 42]] = ) 
     ( $o ".g" -> 33 == :assert )
     ( $o ".y" -> 42 == :assert )
@@ -31,6 +31,9 @@ license: GPLv2
     ( $o ".length" 112 <- )
     ( $o ".length" -> 112 == :assert )    
         
+    ( "mystikkogames" :reverse "semagokkitsym" == :assert ) 
+    ( "12345" :reverse "54321" == :assert ) 
+    
    	# How to read and write files in flang!
     ( $filename "temp.txt" = )
     ( $file $filename "w" :file_open = )
@@ -48,6 +51,15 @@ license: GPLv2
     
     ( -100 :abs 100 == :assert ) 
     ( 100 :abs 100 == :assert ) 
+    ( 0 :abs 0 == :assert ) 
+    
+    ( 1 10 :max 10 == :assert ) 
+    ( 42 10 :max 42 == :assert ) 
+    ( 42 100 :max 100 == :assert ) 
+    
+    ( 1 10 :min 1 == :assert ) 
+    ( 42 10 :min 10 == :assert ) 
+    ( 42 100 :min 42 == :assert ) 
         
     ( 2 :floor 2 == :assert ) 
     ( 2.4 :floor 2 == :assert )    
@@ -61,6 +73,15 @@ license: GPLv2
     ( -2.7 :ceil -2 :assert ) 
     ( -2 :ceil -2 :assert ) 
          
+    ( 0 :sin 0.1 < :assert )
+    ( 0 :cos 0.9 > :assert )
+    ( 3.14 0.5 * :cos 0.1 < :assert )
+    ( 3.14 0.5 * :sin 0.9 > :assert )
+    ( 0 :tan 0.1 < :assert )
+    
+    ( 1 10 :random 11 < :assert ) 
+    ( 5 10 :random 4 > :assert ) 
+        
     ( $var "abc" = ) 
     ( $var2 "def" = ) 
     ( $var $var2 :join "abcdef" == :assert ) 
@@ -68,9 +89,17 @@ license: GPLv2
     ( "mystikko" "games" :join "mystikkogames" == :assert )    
     ( "123" "321" :join "123321" == :assert )     
 	
-    ( "abcdef" "bcd" :contain :assert )
-    ( "abcde484f" "484" :contain :assert )
+    ( "12345" "l" :contains ! :assert )
+    ( "12345" "4" :contains :assert )
+    ( "abcdef" "bcd" :contains :assert )
+    ( "abcde484f" "484" :contains :assert )
 
+    ( "abcde484f" "000" :contains ! :assert )
+    ( "abcde123123484f" "trim" :contains ! :assert )
+    
+    ( 42 "abc%i" :sprintf "abc42" == :assert )
+    ( 42.12345 "abc%.3f" :sprintf "abc42.123" == :assert )
+    
     ( $var [] = ) 
     ( $var 1 :push ) 
     ( $var 2 :push ) 
@@ -93,10 +122,27 @@ license: GPLv2
     # We can pass lambdas as arguments to functions!
     ( ( lambda ( ) : ( 11 ) ) ( lambda ( ) : ( 42 ) ) :$cruncher 42 == :assert )
         
-    ( "1" :assert )    
-    ( "..." :assert )    
-    ( "0.0" :assert )
+    ( "1" :assert ) # true 
+    ( "..." :assert ) # true   
+    ( "0.0" :assert ) # true
+    ( "false" :assert ) # true
+    ( "-1" :assert ) # true
+    ( -1 :assert ) # true
+    
+    # Only 0 is false in flang. Everything else is true! 
+    ( 0 ! :assert ) # false 
         
+  	# Make sure break works as expected!
+   	( $var 42 = )
+   	( loop ( 1 ) : ( if ( $var 45 == ) : ( break ) ) ( $var ++ ) )
+    ( $var 45 == :assert )
+    
+  	# Make sure continue works as expected!
+   	( $var 42 = )
+   	( $i 0 = )
+   	( loop ( $i 5 < ) : ( $i ++ ) ( if ( $i 0 > ) : ( continue ) ) ( $var ++ ) )
+    ( $var 42 == :assert )
+    
    	( $var 42 = )
    	( if ( 1 ) : ( $var 142 = ) )
     ( $var 142 == :assert )
@@ -124,6 +170,10 @@ license: GPLv2
    	( $var 42 = )
    	( $var 44 -= )
    	( $var -2 == :assert )
+   	
+   	( $var 42 = )
+   	( $var 0 -= )
+   	( $var 42 == :assert )
 
    	( $var 42 = )
    	( $var 2 += )
@@ -160,30 +210,21 @@ license: GPLv2
    	( $var 100 = )
    	( $var 10 += )
     ( $var 110 == :assert )
+    
+   	( $var 100 = )
+   	( $var 0 += )
+    ( $var 100 == :assert )
         
    	( $IAMGLOBAL 42 = )
-   	( $IAMGLOBAL 42 == :assert )
-   	
-    ( 0 :sin 0.1 < :assert )
-    ( 0 :cos 0.9 > :assert )
-
-    # NEGATIVE
-
-    ( "0" ! :assert ) # Only "0" is false in flang. Everything else is true! 
-
-    ( "abcde484f" "000" :contain ! :assert )
-    ( "abcde123123484f" "trim" :contain ! :assert )
-
-    ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match ! :assert )    
-    ( "sdf 012dfdsf" "/[0-9]{4}/" :regex_match ! :assert )
-        
+   	( $IAMGLOBAL 42 == :assert )   	       
 )
 
-( function :main ( ) :
-
+###
+flang unit tests # 0.003s
+### 
+( function :main ( ) :    
     ( :clock_start )
     ( :flang_unit_tests )
-    ( :clock_diff "flang unit tests # %.3fs" :printf )
-
+    ( :clock_diff "flang unit tests # %.3fs\n" :printf )
 )
 

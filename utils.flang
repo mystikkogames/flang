@@ -30,7 +30,7 @@ license: GPLv2
 	( 0 ) 
 )
 
-# depency: :is_whitespace
+# " asd" -> "asd"
 ( function :remove_whitespace ( $s ) :
 	( $len $s :strlen = )
 	( $i 0 = )
@@ -45,7 +45,17 @@ license: GPLv2
     ( $ret )
 )
 
-
+# "abcd" -> "dcba"
+( function :reverse ( $s ) :
+	( $len $s :strlen = )
+	( $i 0 = )
+	( $ret "" = )
+	( loop ( $i $len < ):
+		( $ret $s $i :at $ret :join = ) 
+		( $i ++ )
+	)
+	( $ret )
+)
 
 
 

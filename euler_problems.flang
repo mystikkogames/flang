@@ -1,8 +1,9 @@
 ###
-Euler problems ( https://projecteuler.net/archives ) unit tests for flang - language.
- language: flang
- author: mystikkogames ( mystikkogames@protonmail.com )
- license: GPLv2
+Euler problems ( https://projecteuler.net/archives )
+Unit tests + benchmarks
+language: flang
+author: mystikkogames ( mystikkogames@protonmail.com )
+license: GPLv2
 ###
 
 ( include "utils.flang" )
@@ -468,6 +469,110 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
     ( 0 0 $a :$luke_the_trianglewalker ) 
 )
 
+( function :euler_19 ( ) :
+	# https://www.timeanddate.com/calendar/months/
+	( $months [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] = )
+	( $start_day -1 = )
+	( $start_month 0 = )
+	( $year 1900 = )
+	( $century 1900 = )
+	( $i 0 = )
+	( $bloody_sundays 0 = )
+	( loop ( 1 ) : 
+		( $start_day ++ )
+		( if ( $start_day 6 == ) :
+			( if ( $i 0 == ) : 
+				( $bloody_sundays ++ )			
+			)
+			( $start_day -1 = )
+		)
+		( $days_per_month $months $start_month :get = )
+		# Leap years
+		( if ( $century 400 % 0 == $year 4 % 0 == $start_month 1 == and and ) :
+			( $days_per_month ++ ) # In leap years 28 -> 29
+		)		
+		( if ( $i $months $start_month :get == ) :
+			( $i -1 = )
+			( $start_month ++ )		
+		)
+		( if ( $start_month 12 == ) :
+			( $start_month 0 = )
+			( $year ++ )
+			( if ( $year 100 % 0 == ) : ( $century 100 += ) )
+		)
+		( if ( $year 2001 == ) :
+			( break )
+		)
+		( $i ++ )
+		
+	)
+	( $bloody_sundays )			
+)
+
+( function :sum_big_numbers ( $a $b ) :
+	( $a_len $a :strlen = )
+	( $b_len $b :strlen = )
+	( if ( $b_len $a_len > ) : 
+		( $t $a = )
+		( $a $b = )
+		( $b $t = )
+		( $a_len $a :strlen = )
+		( $b_len $b :strlen = )
+	)
+	( $i 0 = )
+	( $leftover 0 = )
+	( $res "" = )
+	( $a $a :reverse = ) 
+	( $b $b :reverse = ) 
+    ( loop ( $i $a_len < ) : 
+    	( $ca $a $i :at = )
+    	( $cb 0 = )
+    	( if ( $i $b_len < ) :
+    		( $cb $b $i :at = )
+    	)
+        ( $n $ca $cb $leftover + + = )    	
+        ( if ( $n 10 >= ):
+        	( $res $res $n 10 % :join = )
+        	( $leftover 1 = )
+        else : 
+        	( $res $res $n :join = )
+        	( $leftover 0 = )
+        )
+        ( $i ++ )
+    )
+    ( if ( $leftover 0 > ) : ( $res $res $leftover :join = ) )    
+	( $res :reverse  )    
+)
+
+( function :multiply_big_numbers ( $v $n ) :
+	( $i 0 = )
+	( $res $v = )
+    ( loop ( $n 1 > ) : 
+    	( $n -- )
+    	( $res $res $v :sum_big_numbers = )
+    )
+	( $res )    
+)
+
+( function :euler_20 ( ) :
+	( $t "1" = )
+	( $i 1 = )
+	( $sum 1 = )
+	( loop ( $i 100 < ) : 		
+		( $t $i $t :multiply_big_numbers = )
+		( $i ++ )
+	)
+	( $i 0 = )
+	( $len $t :strlen = )
+	( $sum 0 = )
+	( loop ( $i $len < ) :
+		( $sum $sum $t $i :at + = )
+		( $i ++ )
+	)
+	( $sum  )
+
+)
+    
 ( function :euler_32 ( ) :
     ( $i 0 = )
     ( $a [] = )
@@ -475,7 +580,7 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
    	( $sum_of_products 0 = )
     ( $is_pandigital ( lambda ( $num ) : 
         ( $i 1 = )
-        ( loop ( $i 9 <= ) : ( if ( $num $i :contain ! ) : ( 0 ) ( return ) ) ( $i ++ ) )
+        ( loop ( $i 9 <= ) : ( if ( $num $i :contains ! ) : ( 0 ) ( return ) ) ( $i ++ ) )
         ( 1 )
     ) = )
     ( $i 0 = )
@@ -501,126 +606,138 @@ Euler problems ( https://projecteuler.net/archives ) unit tests for flang - lang
     ( $t :clock_diff = )
   	( :euler_1 233168 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_1 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_1 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
     ( :euler_2 4613732 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_2 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_2 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_3 6857 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_3 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_3 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
     ( :euler_4 906609 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_4 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_4 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
     ( :euler_5 232792560 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_5 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_5 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
     ( :euler_6 25164150 == :assert )    
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_6 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_6 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
     ( :euler_7 104743 == :assert )    
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_7 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_7 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
     ( :euler_8 23514624000 == :assert )    
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_8 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_8 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
     ( :euler_9 31875000 == :assert )    
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_9 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_9 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_10 142913828922 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_10 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_10 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_11 70600674 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_11 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_11 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_12 76576500 == :assert ) 
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_12 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_12 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_13 5537376230 == :assert ) 
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_13 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_13 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_14 837799 == :assert ) 
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_14 # %.3fs" :printf )  
+  	( $t2 $t - "euler_14 # %.3fs\n" :printf )  
   	
     ( $t :clock_diff = )
     ( :euler_15 137846528820 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_15 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_15 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_16 1366 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_16 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_16 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_17 21124 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_17 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_17 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
     ( :euler_18 1074 == :assert )
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_18 # %.3fs" :printf )  	
+  	( $t2 $t - "euler_18 # %.3fs\n" :printf )  	
   	
+    ( $t :clock_diff = )
+    ( :euler_19 171 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_19 # %.3fs\n" :printf )  	
+  	
+    ( $t :clock_diff = )
+    ( :euler_20 648 == :assert )
+    ( $t2 :clock_diff = )    
+  	( $t2 $t - "euler_20 # %.3fs\n" :printf )  	
+  	    
     ( $t :clock_diff = )
     ( :euler_32 45228 == :assert )    
     ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_32 # %.3fs" :printf )  
+  	( $t2 $t - "euler_32 # %.3fs\n" :printf )  
 )
 
 ###
 euler_1 # 0.003s
 euler_2 # 0.001s
-euler_3 # 0.154s
-euler_4 # 0.032s
+euler_3 # 0.161s
+euler_4 # 0.033s
 euler_5 # 0.005s
 euler_6 # 0.000s
-euler_7 # 2.892s
-euler_8 # 0.038s
-euler_9 # 0.927s
-euler_10 # 117.065s
+euler_7 # 2.877s
+euler_8 # 0.041s
+euler_9 # 0.916s
+euler_10 # 118.027s
 euler_11 # 0.019s
-euler_12 # 4.301s
-euler_13 # 0.078s
-euler_14 # 25.674s
-euler_15 # 2.080s
-euler_16 # 0.770s
-euler_17 # 0.025s
-euler_18 # 2.180s
-euler_32 # 2.608s
-euler problems # 158.854s
+euler_12 # 4.419s
+euler_13 # 0.079s
+euler_14 # 25.789s
+euler_15 # 1.629s
+euler_16 # 0.773s
+euler_17 # 0.026s
+euler_18 # 1.898s
+euler_19 # 0.186s
+euler_20 # 6.875s
+euler_32 # 2.423s
+euler problems # 166.179s
 ###
 ( function :main ( ) : 
 	# init global primes array for :prime_nth
     ( $PRIMES [ 2, 3 ] = )    
     ( :clock_start )
 	( :euler_unit_tests ) 
-    ( :clock_diff "euler problems # %.3fs" :printf )
+    ( :clock_diff "euler problems # %.3fs\n" :printf )
 )
 
