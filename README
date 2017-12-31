@@ -16,16 +16,16 @@ flang's design philosophy:
  - include: Includes file at the top.
  - const: Creates a constant. Can't use that as a variable!
  - types: No types. Everything is a string!
- - boolean: "0" is false. Everything else is true. It's that simple!
+ - boolean: 0 is false. Everything else is true. It's that simple!
  - loop: ( loop ( expr ) : ( stmt ) ... )
  - if: ( if ( expr ) : ( stmt ) ... )
  - lambda: ( lambda ( $arg? ... ) : ( stmt ) ... )
  - function: ( function :yourfunc ( $arg? ... ) : ( stmt ) ... )
  - function calls: ( 2 1 :max "max: %i\n" :printf )
- - Full support for (s/f)printf's. Makes code much better.
+ - Full support for (s/f)printf's.
  - set value: ( $var 42 = )
- - self: refers to current function/lambda
- - ++ / -- / += / -= / *= ...: Code simpler and faster.
+ - self: refers to current function/lambda.
+ - ++ / -- / += / -= / *= ...: Makes code simpler and faster.
  - ...
 
 Random facts about flang
@@ -60,11 +60,13 @@ Versions:
   - ( $i 2.3 -= ) instead of clumsy ( $i $i 2.3 - = )
   - ( 1.23 1 *precision ! ) -> 1.2
   - ( *clock_start ) and ( *clock_diff ) you can benchmark your code very easily!
-  - 0.81
+  
+ - 0.81
   - Regex is now well written and easy to add features in future
   - A few bugs solved + speedups
   - unit_tests.flang added
-  - 0.82
+ 
+ - 0.82
   - ( *read_file ) Very easy and safe to read file. Can read any size of file.
   - json improved. See unit tests
   - Solved 1 more euler in flang - language
