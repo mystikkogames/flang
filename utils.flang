@@ -1,43 +1,101 @@
 ###
-Lib of all kind of stuff!
-Only include what you need!
+Lib of all kind of stuff !
+Only include what you need !
+
 language: flang
 author: mystikkogames ( mystikkogames@protonmail.com )
 license: GPLv2
 ###
 
-( const $$PI 3.14159 )
+# ---
+# --- constants ---
+# ---
 
+( const $$PI 3.141592653589793 )
+( const $$E 2.718281828459045 )
+​( const $$LN10 2.302585092994046 )​
+( const $$LN2 0.6931471805599453 )
+​( const $$LOG10E 0.4342944819032518 )
+​( const $$LOG2E 1.4426950408889634 )​
+​( const $$SQRT1_2 0.7071067811865476 )
+​( const $$SQRT2 1.4142135623730951 )
 
+# ---
+# --- sorting ---
+# ---
 
-
-
-
-
-
-
-
-# string
-
-( function :chr ( $i ) : ( $i "%c" :sprintf ) )
-( function :join ( $a $b ) : ( $a $b "%s%s" :sprintf ) )
-
-( function :is_whitespace ( $c ) :
-	( if ( $c " " == ) : ( 1 ) ( return )
-	elif ( $c "\t" == ) : ( 1 ) ( return )
-	elif ( $c "\n" == ) : ( 1 ) ( return )
+###
+This is an insertion sort. flang's default sorter.
+$array - sortable 1D array
+$compf - returns 1 when a < b otherwise 0
+###
+( function *sort ( $array $compf ) :
+	( $len $array :len = )
+	( $i 1 = ) 
+	( loop ( $i $len < ) : 
+		( $j $i = )
+		#( $i $len "%d-%d\n" :printf )
+		( loop ( $j 0 > ) :
+			( $va $array $j 1 - :get = )
+			( $vb $array $j :get = )
+			( if ( $vb $va *$compf ) : ( break ) )
+			( $a $array $j :get = )
+			( $b $array $j 1 - :get = )
+			( $c $a = )
+			( $array $j $b :set )
+			( $array $j 1 - $c :set )
+			( $j -- )
+		)
+		( $i ++ )
 	)
-	( 0 ) 
+)
+
+# ---
+# --- string ---
+# ---
+
+# not needed - implemented in flang
+#( function *chr ( $i ) : ( $i "%c" :sprintf ) )
+
+# not needed - implemented in flang
+# :sprintf is limited to 1MB as :join is unlimited!
+#( function *join ( $a $b ) : ( $a $b "%s%s" :sprintf ) )
+
+###
+TODO make it work "," -> "||" etc
+
+$str - string to be splitted
+$split - split by this char 
+###
+( function *split ( $split $str ) :
+	( $a [] = )
+	( $l $str :strlen = )
+	( $i 0 = ) 
+	( $t "" = )
+	( loop ( $i $l < ) : 
+		( $c $str $i :at = )
+		( if ( $c $split == ) : ( $a $t :push ) ( $t "" = ) else : ( $t $t $c :join = ) )
+		( $i ++ )
+	)
+	( if ( $t :strlen 0 > ) : ( $a $t :push ) )
+	( $a )
+)
+
+( function *is_whitespace ( $c ) :
+	( if ( $c " " == ) : ( 1 return )
+	elif ( $c "\t" == ) : ( 1 return )
+	elif ( $c "\n" == ) : ( 1 return ) )
+	( 0 )
 )
 
 # " asd" -> "asd"
-( function :remove_whitespace ( $s ) :
+( function *remove_whitespace ( $s ) :
 	( $len $s :strlen = )
 	( $i 0 = )
 	( $ret "" = )
     ( loop ( $i $len < ) : 
     	( $ch $s $i :at = )
-    	( if ( $ch :is_whitespace ! ) :
+    	( if ( $ch *is_whitespace ! ) :
     		( $ret $ret $ch :join = )
     	)
     	( $i ++ )
@@ -45,8 +103,26 @@ license: GPLv2
     ( $ret )
 )
 
+# TODO make *split work like this one
+( function *replace ( $s $replace_this $by_this ) :
+	( $len $s :strlen = )
+	( $len2 $replace_this :strlen = )
+	( $i 0 = )
+	( $ret "" = )
+	( $tmp "" = )
+	( loop ( $i $len < ) :
+		( $c $s $i :at = ) 
+		( $hit 0 = )
+		( if ( $c $replace_this 0 :at == ) :  ( $hit 1 = ) ( $j 0 = ) ( loop ( $j $len2 < $i $j + $len < and ) : ( if ( $s $i $j + :at $replace_this $j :at != ) : ( $hit 0 = ) ( break ) ) ( $j ++ ) ) )
+		( if ( $hit ) : ( $c $by_this = ) ( $i $len2 1 - += ) )
+		( $ret $ret $c :join = ) 
+		( $i ++ )
+	)
+	( $ret )
+)
+
 # "abcd" -> "dcba"
-( function :reverse ( $s ) :
+( function *reverse ( $s ) :
 	( $len $s :strlen = )
 	( $i 0 = )
 	( $ret "" = )
@@ -57,83 +133,62 @@ license: GPLv2
 	( $ret )
 )
 
+# ---
+# --- gfx ---
+# ---
 
+###
+# super slow !!!
+( function :gfx_smooth ( ) :
+    ( $width *get_width_pixel = )
+    ( $height *get_height_pixel = )
+    ( $n $width $height * = )
+    ( $i $width 1 + = )
+    ( loop ( $i $n < ) : 
+        ( $x $i $width % = )
+        ( $y $i $width / *int = )
+        ( if ( $x 0 == $x $width 1 - == $y 0 == $y $height 1 - == or or or ) : ( $i ++ ) ( continue ) )
+        ( $y2 -1 = )
+        ( $r 0 = )
+        ( $g 0 = )
+        ( $b 0 = )
+        ( loop ( $y2 2 < ) : 
+            ( $x2 -1 = )
+            ( loop ( $x2 2 < ) :
+                ( $x $x2 + $y $y2 + *set_pos_pixel)
+                ( $o *get_color_pixel = )
+                ( if ( $x2 0 == $y2 0 == and ) :                     
+                    ( $r $o ".r" -> 2 * += ) 
+                    ( $g $o ".g" -> 2 * += ) 
+                    ( $b $o ".b" -> 2 * += ) 
+                    else :                     
+                    ( $r $o ".r" -> += ) 
+                    ( $g $o ".g" -> += ) 
+                    ( $b $o ".b" -> += ) 
+                )
+                ( $x2 ++ )
+            ) 
+            ( $y2 ++ )
+        )
 
-
-
-
-
-
-
-
-# math
-
-( function :is_prime ( $prime ) :   
-	( $i 2 = ) 
-	( if ( $prime 2 < ) : ( 0 ) ( return ) )
-	( loop ( $i $i * $prime < ) :
-		( if ( $prime $i % 0 == ) : 
-			( 0 )
-			( return )
-		) 
-		( $i ++ )
-	)
-	( 1 )
-)
-
-# Initialize:
-# ( $PRIMES [ 2, 3 ] = )
-( function :prime_nth ( $i ) :   
-    ( $i 0 >= :assert )
-    ( if ( $i $PRIMES :len < ) :
-    	( $PRIMES $i :get )
-        ( return )
+        ( $x $y *set_pos_pixel )
+        ( $r 10 /= )
+        ( $g 10 /= )
+        ( $b 10 /= )
+        ( $r $g $b *int *set_rgb_pixel)
+        ( *render_pixel )
+        ( $i ++ )
     )
-    ( loop ( $PRIMES :len $i <= ) : 
-        ( $candidate $PRIMES $PRIMES :len 1 - :get = )
-        ( loop ( 1 ) :
-            ( $success 1 = )
-            ( $candidate ++ )
-            ( $k 0 = )
-            ( $len $PRIMES :len = )
-            ( loop ( $k $len < ) :
-            	( $t $PRIMES $k :get = )
-            	( if ( $t $t * $candidate > ) :
-            		( break )
-            	)
-            	( if ( $candidate $PRIMES $k :get % 0 == ) :
-                    ( $success 0 = )
-                    ( break )
-               	)
-               	( $k ++ )
-          	)
-            ( if ( $success ) :
-                ( $PRIMES $candidate :push )
-                ( break )
-          	)
-     	)
-  	)
-    ( $PRIMES $i :get )
 )
+###
 
-
-
-
-
-
-
-
-
-
-# gfx 
-
-( function :gfx_random_color ( $o ) :
+( function *gfx_random_color ( $o ) :
     ( $o ".r" 0 256 :random :floor <- )
     ( $o ".g" 0 256 :random :floor <- )
     ( $o ".b" 0 256 :random :floor <- )
 )
 
-( function :gfx_render_filled_circle ( $o ) :
+( function *gfx_render_filled_circle ( $o ) :
     ( $x $o ".x" -> = )
     ( $y $o ".y" -> = )
     ( $radius $o ".radius" -> = )
@@ -150,11 +205,11 @@ license: GPLv2
         ( $x2 $x $radius - = )
         ( loop ( $x2 $end_x < ) : 
             ( if ( $x2 $x - 2 :pow $y2 $y - 2 :pow + $radius $radius * < $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and and ) :            
-				( $x2 :image_set_x ) 
-				( $y2 :image_set_y ) 
-				( $r :image_set_r )
-				( $g :image_set_g )
-				( $b :image_set_b )
+				( $x2 *image_set_x ) 
+				( $y2 *image_set_y ) 
+				( $r *image_set_r )
+				( $g *image_set_g )
+				( $b *image_set_b )
             )
             ( $x2 ++ )
         )
@@ -162,7 +217,7 @@ license: GPLv2
     )
 )
 
-( function :gfx_render_circle ( $o ) :
+( function *gfx_render_circle ( $o ) :
     ( $x $o ".x" -> = )
     ( $y $o ".y" -> = )
     ( $radius $o ".radius" -> = )
@@ -177,18 +232,18 @@ license: GPLv2
         ( $x2 $x $angle :cos $radius * + :floor = )
         ( $y2 $y $angle :sin $radius * + :floor = )
         ( if ( $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and ) :
-			( $x2 :image_set_x ) 
-			( $y2 :image_set_y ) 
-			( $r :image_set_r )
-			( $g :image_set_g )
-			( $b :image_set_b )
+			( $x2 *image_set_x ) 
+			( $y2 *image_set_y ) 
+			( $r *image_set_r )
+			( $g *image_set_g )
+			( $b *image_set_b )
         )
         ( $angle 0.001 += )
         ( $i ++ )
     )
 )
 
-( function :gfx_render_filled_rectangle ( $o ) :
+( function *gfx_render_filled_rectangle ( $o ) :
     ( $x $o ".x" -> = )
     ( $y $o ".y" -> = )
     ( $w $o ".w" -> = )
@@ -205,11 +260,11 @@ license: GPLv2
         ( $tx $x = )
         ( loop ( $tx $end_x < ) : 
             ( if ( $tx $width < $y $height < and ) :
-				( $tx :image_set_x ) 
-				( $y :image_set_y ) 
-				( $r :image_set_r )
-				( $g :image_set_g )
-				( $b :image_set_b )
+				( $tx *image_set_x ) 
+				( $y *image_set_y ) 
+				( $r *image_set_r )
+				( $g *image_set_g )
+				( $b *image_set_b )
 	        )
             ( $tx ++ )
         )
@@ -217,7 +272,7 @@ license: GPLv2
     )
 )
 
-( function :gfx_render_line ( $o ) :
+( function *gfx_render_line ( $o ) :
     ( $x $o ".x" -> = )
     ( $y $o ".y" -> = )
     ( $x2 $o ".x2" -> = )
@@ -237,33 +292,21 @@ license: GPLv2
    		( $x3 $x $dx $i * + = )
    		( $y3 $y $dy $i * + = )
         ( if ( $x3 0 >= $x3 $width < and $y3 0 >= $y3 $height < and and ) :
-			( $x3 :image_set_x ) 
-			( $y3 :image_set_y ) 
-			( $r :image_set_r )
-			( $g :image_set_g )
-			( $b :image_set_b )
+			( $x3 *image_set_x ) 
+			( $y3 *image_set_y ) 
+			( $r *image_set_r )
+			( $g *image_set_g )
+			( $b *image_set_b )
 		)
       	( $i ++ )
     )
 )
 
+# ---
+# --- image ---
+# ---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# image
-
-( function :file_write_image ( ) :
+( function *file_write_image ( ) :
 	( $w $IMAGE_FILE ".w" -> = )
 	( $h $IMAGE_FILE ".h" -> = )
 	( $name $IMAGE_FILE ".name" -> = )
@@ -278,19 +321,25 @@ license: GPLv2
 	( $file :file_close )
 )
 
-( function :image_init ( ) :
+( function *image_init ( ) :
 	# No resetting. Just make a new array each time!
 	( $IMAGE_FILE [ ] = )
 	( $IMAGE_DATA [ ] = )
 )
 
-( function :image_set_width ( $w ) : ( $IMAGE_FILE ".w" $w <- ) )
+( function *image_free ( ) :
+	# No resetting. Just make a new array each time!
+	( $IMAGE_FILE :free )
+	( $IMAGE_DATA :free )
+)
 
-( function :image_set_height ( $h ) : ( $IMAGE_FILE ".h" $h <- ) )
+( function *image_set_width ( $w ) : ( $IMAGE_FILE ".w" $w <- ) )
 
-( function :image_set_name ( $n ) : ( $IMAGE_FILE ".name" $n <- ) )
+( function *image_set_height ( $h ) : ( $IMAGE_FILE ".h" $h <- ) )
 
-( function :image_reset_data ( ) : 
+( function *image_set_name ( $n ) : ( $IMAGE_FILE ".name" $n <- ) )
+
+( function *image_reset_data ( ) : 
 	( $w $IMAGE_FILE ".w" -> :floor = )
 	( $h $IMAGE_FILE ".h" -> :floor = )
 	( $n $w $h 3 * * = )
@@ -298,11 +347,11 @@ license: GPLv2
     ( loop ( $i $n < ) : ( $IMAGE_DATA 0 :push ) ( $i ++ ) )
 )
 
-( function :image_set_x ( $x ) : ( $IMAGE_FILE ".x" $x <- ) )
+( function *image_set_x ( $x ) : ( $IMAGE_FILE ".x" $x <- ) )
 
-( function :image_set_y ( $y ) : ( $IMAGE_FILE ".y" $y <- ) )
+( function *image_set_y ( $y ) : ( $IMAGE_FILE ".y" $y <- ) )
 
-( function :image_set_r ( $color_r ) :
+( function *image_set_r ( $color_r ) :
 	( $x $IMAGE_FILE ".x" -> :floor = )
 	( $y $IMAGE_FILE ".y" -> :floor = )
 	( $w $IMAGE_FILE ".w" -> :floor = )
@@ -313,7 +362,7 @@ license: GPLv2
 	( $IMAGE_DATA $x $y $w * + 3 * $color_r :floor 256 % :set ) 
 )
 
-( function :image_set_g ( $color_g ) :
+( function *image_set_g ( $color_g ) :
 	( $x $IMAGE_FILE ".x" -> :floor = )
 	( $y $IMAGE_FILE ".y" -> :floor = )
 	( $w $IMAGE_FILE ".w" -> :floor = )
@@ -324,7 +373,7 @@ license: GPLv2
 	( $IMAGE_DATA $x $y $w * + 3 * 1 + $color_g :floor 256 % :set ) 
 )
 
-( function :image_set_b ( $color_b ) :
+( function *image_set_b ( $color_b ) :
 	( $x $IMAGE_FILE ".x" -> :floor = )
 	( $y $IMAGE_FILE ".y" -> :floor = )
 	( $w $IMAGE_FILE ".w" -> :floor = )

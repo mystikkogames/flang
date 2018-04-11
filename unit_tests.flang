@@ -1,25 +1,78 @@
 ###
-Unit tests
+
+Unit tests. Not in particular order. 
+This document serves as a manual for flang language.
+
 language: flang
 author: mystikkogames ( mystikkogames@protonmail.com )
 license: GPLv2
+
 ###
+
+# !!! Note includes and consts must at the top !!!
 
 ( include "utils.flang" )
 
-( function :flang_unit_tests ( ) :
-    ( "1 2 3 4 5 6 " :remove_whitespace "123456" == :assert )
-    ( "a b c d e f " :remove_whitespace "abcdef" == :assert )
-    ( " " :is_whitespace :assert )
+( const $$IMACONTS 42 )
+( const $$IMACONTSX2 4242 )
+
+( function *utils_unit_tests ( ) :
+
+	# 1.. *remove_whitespace
+    ( "1 2 3 4 5 6 " *remove_whitespace "123456" == :assert )
+    ( "a b c d e f " *remove_whitespace "abcdef" == :assert )
+    ( " " *is_whitespace :assert )
     
+    # 2.. *reverse
+    ( "mystikkogames" *reverse "semagokkitsym" == :assert ) 
+    ( "12345" *reverse "54321" == :assert ) 
+    
+   	# 3.. *sort
+   	( $v [ 3, 1, 2, 77, 42 ] = )
+   	( ( lambda ( $a $b ) : ( if ( $a $b < )  : ( 1 return ) ) ( 0 return ) ) $v *sort )
+   	( $v 0 :get 1 == :assert )
+   	( $v 4 :get 77 == :assert )
+   	
+   	# reverse this way
+   	( $v [ 3, 1, 2, 42 ] = )
+   	( ( lambda ( $a $b ) : ( if ( $a $b > )  : ( 1 return ) ) ( 0 return ) ) $v *sort )
+   	( $v 0 :get 42 == :assert )
+   	
+   	# 4.. *is_whitespace
+   	( " " *is_whitespace :assert )
+   	( "\t" *is_whitespace :assert )
+   	( "\n" *is_whitespace :assert )
+   	( "a" *is_whitespace ! :assert )
+   	
+   	# 5.. *split
+   	( $v "mys,tik,ko,ga,mes" "," *split = )
+   	( $v 1 :get "tik" == :assert )
+   	( $v :free )
+   	
+   	( $v "abc,def,ghi,jkl,mop" "," *split = )
+   	( $v 2 :get "ghi" == :assert )
+   	
+   	# 6.. *replace
+	(  "->" "."  "my.nice.object" *replace "my->nice->object" == :assert )
+	(  "" ".."  "my..42" *replace "my42" == :assert )
+	
+)
+
+( function *flang_unit_tests ( ) :
+
+    # 1.. :assert
+    ( 1 :assert )  
+    ( 0 ! :assert )  
+    
+    # 2.. :regex_match
     ( "sdf 012-12-1 dfdsf" "/\d{3}-\d{2}-\d{1}/" :regex_match :assert )    
     ( "sdf 012dfdsf" "/[0-9]{3}/" :regex_match :assert )    
     ( "sdf 040-1234567 dfdsf" "/[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
     ( "040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match :assert )    
-  
     ( "sdf 040-1234567 dfdsf" "/^[0-9]{3}-[0-9]{7}/" :regex_match ! :assert )    
     ( "sdf 012dfdsf" "/[0-9]{4}/" :regex_match ! :assert )
     
+    # 3.. [], ->, <-, :push, :len, :get, :free
     ( $o ["r": 24, "g": 33, "b": 55, "x": 22, "y": 42, "cells": [2, 5, 42]] = ) 
     ( $o ".g" -> 33 == :assert )
     ( $o ".y" -> 42 == :assert )
@@ -29,11 +82,35 @@ license: GPLv2
     ( $o [ 1, 5, "some": [ 2, 4] ] = ) 
     ( $o ".some.0" -> 2 == :assert )
     ( $o ".length" 112 <- )
-    ( $o ".length" -> 112 == :assert )    
-        
-    ( "mystikkogames" :reverse "semagokkitsym" == :assert ) 
-    ( "12345" :reverse "54321" == :assert ) 
+    ( $o ".length" -> 112 == :assert ) 
     
+    ( $o [] = ) 
+    ( $o ".x" 125 <- ) 
+    ( $o ".x" -> 125 == :assert )   
+    
+    ( $v [] = ) 
+    ( $v 1 :push ) 
+    ( $v 2 :push ) 
+    ( $v 3 :push ) 
+    ( $v 42 :push ) 
+    ( $v 3 :get 42 == :assert )
+    ( $v :len 4 == :assert )
+    ( $v :free ) # free resources
+    ( $v :len 0 == :assert )
+    
+    ( $v [ "name": "mystikkogames" ] = ) 
+    ( $v ".name" 42 <- )
+    ( $v ".name" -> 42 == :assert )
+    
+    # 4.. :chr
+    ( 111 :chr "o" == :assert )
+    ( 88 :chr "X" == :assert )
+    
+    # 5.. :ord
+    ( "2" :ord 50 == :assert )
+    ( "G" :ord 71 == :assert )
+    
+    # 6.. :file_open, :file_read, :file_close, :fprintf
    	# How to read and write files in flang!
     ( $filename "temp.txt" = )
     ( $file $filename "w" :file_open = )
@@ -41,87 +118,97 @@ license: GPLv2
 	( $file :file_close )
     ( $data $filename :file_read = ) 
     ( $data "this is a test!" == :assert )	
-	
-    ( $o [] = ) 
-    ( $o ".x" 125 <-  ) 
-    ( $o ".x" -> 125 == :assert )
 
+	# 7.. :sqrt
     ( 25 :sqrt 5 - :abs 0.1 < :assert ) 
     ( 100 :sqrt 10 - :abs 0.1 < :assert ) 
     
+	# 8.. :abs
     ( -100 :abs 100 == :assert ) 
     ( 100 :abs 100 == :assert ) 
     ( 0 :abs 0 == :assert ) 
     
+	# 9.. :max
     ( 1 10 :max 10 == :assert ) 
     ( 42 10 :max 42 == :assert ) 
     ( 42 100 :max 100 == :assert ) 
+    ( 421 100 :max 421 == :assert ) 
     
+	# 10.. :min
     ( 1 10 :min 1 == :assert ) 
     ( 42 10 :min 10 == :assert ) 
     ( 42 100 :min 42 == :assert ) 
         
+	# 11.. :floor
     ( 2 :floor 2 == :assert ) 
     ( 2.4 :floor 2 == :assert )    
     ( 2.9 :floor 2 == :assert )    
     ( -2.7 :floor -3 == :assert )  
     ( -2 :floor -2 == :assert )
     
+	# 12.. :ceil
     ( 2 :ceil 2 == :assert )
     ( 2.4 :ceil 3 == :assert )
     ( 2.9 :ceil 3 == :assert )
     ( -2.7 :ceil -2 :assert ) 
     ( -2 :ceil -2 :assert ) 
          
+	# 13.. :asin
+    ( 0 :asin 10 * :floor 0 == :assert )
+    ( 1 :asin 100 * :floor 140 > :assert )
+
+	# 14.. :sin    
     ( 0 :sin 0.1 < :assert )
-    ( 0 :cos 0.9 > :assert )
     ( 3.14 0.5 * :cos 0.1 < :assert )
+
+	# 15.. :cos
+    ( 0 :cos 0.9 > :assert )
     ( 3.14 0.5 * :sin 0.9 > :assert )
+
+	# 16.. :tan
     ( 0 :tan 0.1 < :assert )
-    
+   
+   	# 17.. :random
     ( 1 10 :random 11 < :assert ) 
     ( 5 10 :random 4 > :assert ) 
         
-    ( $var "abc" = ) 
-    ( $var2 "def" = ) 
-    ( $var $var2 :join "abcdef" == :assert ) 
+    # 18.. :at
+    ( "abcdef" 1 :at "b" == :assert ) 
+    ( "abcdef" 2 :at "c" == :assert ) 
+    
+    # 19.. :join
+    ( $v "abc" = ) 
+    ( $v2 "def" = ) 
+    ( $v $v2 :join "abcdef" == :assert ) 
     ( "abc" "def" :join "abcdef" == :assert )    
     ( "mystikko" "games" :join "mystikkogames" == :assert )    
     ( "123" "321" :join "123321" == :assert )     
+    ( "a" "b" "c" "d" :join :join :join "abcd" == :assert )     
 	
+	# 20.. :contains
     ( "12345" "l" :contains ! :assert )
     ( "12345" "4" :contains :assert )
     ( "abcdef" "bcd" :contains :assert )
     ( "abcde484f" "484" :contains :assert )
-
     ( "abcde484f" "000" :contains ! :assert )
     ( "abcde123123484f" "trim" :contains ! :assert )
     
+    # 21.. :sprintf
     ( 42 "abc%i" :sprintf "abc42" == :assert )
     ( 42.12345 "abc%.3f" :sprintf "abc42.123" == :assert )
     
-    ( $var [] = ) 
-    ( $var 1 :push ) 
-    ( $var 2 :push ) 
-    ( $var 3 :push ) 
-    ( $var 42 :push ) 
-    ( $var 3 :get 42 == :assert )
-    ( $var :len 4 == :assert )
-    
-    ( $var [ "name": "mystikkogames" ] = ) 
-    ( $var ".name" 42 <- )
-    ( $var ".name" -> 42 == :assert )
-    
+    # 21.. lambda
     ( $multiply_by_2 ( lambda ( $num ) : ( $num 2 * ) ) = )
-    ( 7 :$multiply_by_2 14 == :assert )
-    ( 21 :$multiply_by_2 42 == :assert )
-    ( $var2 $multiply_by_2 = )
-    ( 21 :$var2 42 == :assert )
+    ( 7 *$multiply_by_2 14 == :assert )
+    ( 21 *$multiply_by_2 42 == :assert )
+    ( $v2 $multiply_by_2 = )
+    ( 21 *$v2 42 == :assert )
 
-    ( $cruncher ( lambda ( $func1 $func2 ) : ( $a :$func1 = ) ( $b :$func2 = ) ( if ( $a $b > ) : ( $a ) else : ( $b ) ) ) = )
+    ( $cruncher ( lambda ( $func1 $func2 ) : ( $a *$func1 = ) ( $b *$func2 = ) ( if ( $a $b > ) : ( $a ) else : ( $b ) ) ) = )
     # We can pass lambdas as arguments to functions!
-    ( ( lambda ( ) : ( 11 ) ) ( lambda ( ) : ( 42 ) ) :$cruncher 42 == :assert )
+    ( ( lambda ( ) : ( 11 ) ) ( lambda ( ) : ( 42 ) ) *$cruncher 42 == :assert )
         
+   	# 22.. booleans
     ( "1" :assert ) # true 
     ( "..." :assert ) # true   
     ( "0.0" :assert ) # true
@@ -132,99 +219,192 @@ license: GPLv2
     # Only 0 is false in flang. Everything else is true! 
     ( 0 ! :assert ) # false 
         
+    # 23.. loop, break
   	# Make sure break works as expected!
-   	( $var 42 = )
-   	( loop ( 1 ) : ( if ( $var 45 == ) : ( break ) ) ( $var ++ ) )
-    ( $var 45 == :assert )
+   	( $v 42 = )
+   	( loop ( 1 ) : ( if ( $v 45 == ) : ( break ) ) ( $v ++ ) )
+    ( $v 45 == :assert )
     
+    # 23.. loop, continue
   	# Make sure continue works as expected!
-   	( $var 42 = )
+   	( $v 42 = )
    	( $i 0 = )
-   	( loop ( $i 5 < ) : ( $i ++ ) ( if ( $i 0 > ) : ( continue ) ) ( $var ++ ) )
-    ( $var 42 == :assert )
+   	( loop ( $i 5 < ) : ( $i ++ ) ( if ( $i 0 > ) : ( continue ) ) ( $v ++ ) )
+    ( $v 42 == :assert )
     
-   	( $var 42 = )
-   	( if ( 1 ) : ( $var 142 = ) )
-    ( $var 142 == :assert )
+    # 23.. if
+   	( $v 42 = )
+   	( if ( 1 ) : ( $v 142 = ) )
+    ( $v 142 == :assert )
    	
-   	( $var 42 = )
-   	( if ( 0 ) : ( $var 0 = ) else : ( $var 111 = ) )
-    ( $var 111 == :assert )
+   	# 24.. if else
+   	( $v 42 = )
+   	( if ( 0 ) : ( $v 0 = ) else : ( $v 111 = ) )
+    ( $v 111 == :assert )
 
-   	( $var 42 = )
-   	( if ( 0 ) : ( $var 0 = ) elif ( 1 ) : ( $var 19 = ) else : ( $var 111 = ) )
-    ( $var 19 == :assert )
+   	# 24.. if elif else
+   	( $v 42 = )
+   	( if ( 0 ) : ( $v 0 = ) elif ( 1 ) : ( $v 19 = ) else : ( $v 111 = ) )
+    ( $v 19 == :assert )
     
-   	( $var 42 = )
-   	( $var 10 %= )
-   	( $var 2 == :assert )
+    # 25.. %=
+   	( $v 42 = )
+   	( $v 10 %= )
+   	( $v 2 == :assert )
 
-   	( $var 42 = )
-   	( $var 2 %= )
-   	( $var 0 == :assert )
+   	( $v 42 = )
+   	( $v 2 %= )
+   	( $v 0 == :assert )
 
-   	( $var 42 = )
-   	( $var 2 -= )
-   	( $var 40 == :assert )
+    # 26.. -=
+   	( $v 42 = )
+   	( $v 2 -= )
+   	( $v 40 == :assert )
 
-   	( $var 42 = )
-   	( $var 44 -= )
-   	( $var -2 == :assert )
+   	( $v 42 = )
+   	( $v 44 -= )
+   	( $v -2 == :assert )
    	
-   	( $var 42 = )
-   	( $var 0 -= )
-   	( $var 42 == :assert )
-
-   	( $var 42 = )
-   	( $var 2 += )
-   	( $var 44 == :assert )
-
-   	( $var 42 = )
-   	( $var 2 /= )
-   	( $var :floor 21 == :assert )
-
-   	( $var 42 = )
-   	( $var 42 /= )
-   	( $var :floor 1 == :assert )
-
-   	( $var 42 = )
-   	( $var 2 *= )
-   	( $var 84 == :assert )
-
-   	( $var 42 = )
-   	( $var -2 *= )
-   	( $var -84 == :assert )
-
-   	( $var 42 = )
-   	( $var ++ )
-   	( $var 43 == :assert )
-
-   	( $var 42 = )
-   	( $var -- )
-   	( $var 41 == :assert )
+   	( $v 42 = )
+   	( $v 0 -= )
+   	( $v 42 == :assert )
     
-   	( $var 100 = )
-   	( $var 10 -= )
-    ( $var 90 == :assert )
+   	( $v 100 = )
+   	( $v 10 -= )
+    ( $v 90 == :assert )
+
+    # 27.. +=
+   	( $v 42 = )
+   	( $v 2 += )
+   	( $v 44 == :assert )
+   	
+   	( $v 100 = )
+   	( $v 10 += )
+    ( $v 110 == :assert )
     
-   	( $var 100 = )
-   	( $var 10 += )
-    ( $var 110 == :assert )
+   	( $v 100 = )
+   	( $v 0 += )
+    ( $v 100 == :assert )
+
+    # 28.. /=
+   	( $v 42 = )
+   	( $v 2 /= )
+   	( $v :floor 21 == :assert )
+
+   	( $v 42 = )
+   	( $v 42 /= )
+   	( $v :floor 1 == :assert )
+
+    # 29.. *=
+   	( $v 42 = )
+   	( $v 2 *= )
+   	( $v 84 == :assert )
+
+   	( $v 42 = )
+   	( $v -2 *= )
+   	( $v -84 == :assert )
+
+    # 30.. ++
+   	( $v 42 = )
+   	( $v ++ )
+   	( $v 43 == :assert )
+
+    # 30.. --
+   	( $v 42 = )
+   	( $v -- )
+   	( $v 41 == :assert )
     
-   	( $var 100 = )
-   	( $var 0 += )
-    ( $var 100 == :assert )
-        
+    # 31.. global variables
    	( $IAMGLOBAL 42 = )
-   	( $IAMGLOBAL 42 == :assert )   	       
+   	( $IAMGLOBAL 42 == :assert )   	   
+   	
+    # 32.. slice
+   	( "abcdefghi" 1 3 :slice "bc" == :assert ) 
+   	( "abcd42efefg" 4 6 :slice 42 == :assert ) 
+   	    
+    # 33.. :strlen
+   	( "abcdefghi" :strlen 9 == :assert ) 
+   	( "42" :strlen 2 == :assert ) 
+   	
+    # 33.. :flat
+    ( $v [1, 2, "qq", 5] = ) 
+   	( $v :flat "12qq5" == :assert ) 
+    ( $v [1, [1, 2, 3], "qq",5] = ) 
+   	( $v :flat "1123qq5" == :assert ) 
+   	
+    # 34.. :reset
+    ( $v [1,2,5] = ) 
+   	( $v :len 3 == :assert ) 
+   	( $v :reset ) 
+   	( $v :len 0 == :assert ) 
+
+    # 35.. :prime_nth
+    ( 117 :prime_nth 647 == :assert ) 
+
+    # 36.. :is_prime
+    ( 647 :is_prime :assert ) 
+    
+    # 37.. :fobj_compile
+   	( $v "[1, 2, 3, 42, 77, 99]" :fobj_compile = ) 
+   	( $v 3 :get 42 == :assert ) 
+    
+    # 38.. short comment
+    #  short comment
+    
+    # 39.. long comment
+    ###
+    long comment
+    long comment
+    long comment
+    ###
+    
+    ###
+    # 40.. :input - uncomment this to test it out!
+   	( "name" :printf ) 
+   	( $v :input = ) 
+   	( $v "Your name is: %s\n" :printf ) 
+   	###
+   	
+   	###
+    # 41.. :clock_start, :clock_diff - uncomment this to test it out!
+   	( :clock_start ) 
+   	( :clock_diff 1 < :assert )
+   	###
+ 
+ 	###
+ 	not implemented yet!
+ 	# 42.. :log
+ 	( 10 :log "%d" :printf)  	 
+ 	###
+ 	
+    # 43.. consts
+   	( $$IMACONTS 42 == :assert )
+   	( $$IMACONTSX2 4242 == :assert )   
+ 	
+    # 44.. ! / not
+   	( 0 ! :assert )
+   	( 42 ! 0 == :assert )
+   	
+    ###
+    # 45.. :print - a quick way to debug smt - uncomment this to test it out!
+   	( "42" :print ) 
+   	###
+   	
 )
 
 ###
-flang unit tests # 0.003s
+utils unit tests # 0.000s
+flang unit tests # 0.000s
 ### 
-( function :main ( ) :    
+( function *main ( ) :    
+
     ( :clock_start )
-    ( :flang_unit_tests )
+    ( *utils_unit_tests )
+    ( :clock_diff "utils unit tests # %.3fs\n" :printf )
+
+    ( :clock_start )
+    ( *flang_unit_tests )
     ( :clock_diff "flang unit tests # %.3fs\n" :printf )
+    
 )
 

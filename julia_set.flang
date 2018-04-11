@@ -1,0 +1,97 @@
+###
+Julia set renderer in flang
+run: ./flang -f 'julia_set.flang'
+
+version: 1.0
+language: flang
+author: mystikkogames ( mystikkogames@protonmail.com )
+license: GPLv2
+###
+
+( include "utils.flang" )
+
+( function *julia_set_renderer ( ) :
+    ( $width 500 = )
+    ( $height 500 = )
+    ( $move_x -0.1325 0.1325 :random = )
+    ( $move_y -0.1325 0.1325 :random = )
+    ( $color_r_base 0 25 :random = )
+    ( $color_g_base 0 25 :random = )
+    ( $color_b_base 0 25 :random = )
+    ( $loops 300 = )     
+  	( $zoom 0.45 0.9 :random = )      
+    ( $cre -0.959 -0.45 :random = )
+    ( $cim 0.2 0.5 :random = )
+    
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( 1 10000 :random "julia_set_renderer%i.ppm" :sprintf *image_set_name )
+    ( *image_reset_data )    
+    
+    ( $escaper ( lambda ( $o ) : 
+    	( $re $o ".re" -> = )
+    	( $im $o ".im" -> = )
+    	( $cre $o ".cre" -> = )
+    	( $cim $o ".cim" -> = )
+    	( $loops $o ".loops" -> = )
+        ( $i 0 = )
+        ( $new_re $re = )
+        ( $new_im $im = ) 
+        ( loop ( $i $loops < $new_re $new_re * $new_im $new_im * + 4 < and ) : 
+            ( $old_re $new_re = )
+            ( $old_im $new_im = ) 
+            ( $new_re $old_re $old_re * $old_im $old_im * - $cre + = ) 
+            ( $new_im $old_re $old_im 2 * * $cim + = ) 
+            ( $i ++ ) 
+        ) 
+        ( $i ) 
+    ) = )
+    
+    ( $n $width $height * = )
+   	( $o [] = )
+    ( $o ".cre" $cre <- )
+    ( $o ".cim" $cim <- )
+    ( $o ".loops" $loops <- )
+    ( $y 0 = )
+    ( loop ( $y $height < ) : 
+    	( $x 0 = )
+		( loop ( $x $width < ) : 
+		    ( $re $x $width 0.5 * - 0.5 $zoom $width * * / $move_x + = )
+		    ( $im $y $height 0.5 * - 0.5 $zoom $height * * / $move_y + = )
+		    ( $o ".re" $re <- )
+		    ( $o ".im" $im <- )
+		    ( $cnt $o *$escaper = )     			
+			( $x *image_set_x ) 
+			( $y *image_set_y ) 	
+			( if ( $cnt 100 > ) : ( $cnt 0.85 *= ) )		        
+			( $cnt 0.955 * $cnt 0.2087 * 2 :pow + $color_r_base + 225 :min *image_set_r )  
+			( $cnt 0.867 * $cnt 0.2076 * 2 :pow + $color_g_base + 230 :min *image_set_g )
+			( $cnt 0.883 * $cnt 0.2295 * 2 :pow + $color_b_base + 250 :min *image_set_b ) 
+		    ( $x ++ )
+		) 
+		( $y ++ )
+	)
+	( *file_write_image )
+	( *image_free )
+) 
+
+( function *render_julia_sets ( ) :
+	( $i 0 = )
+	( loop ( $i 10 < ) : 
+    	( $t :clock_diff = )
+		( *julia_set_renderer )
+		( $t2 :clock_diff = )    
+		( $t2 $t - $i "%i. julia set # %.3fs\n" :printf )  
+		( $i ++ )
+	)	
+)
+ 
+( function *main ( ) :  
+	( "Julia Set Renderer ~~~ flang" :print )
+    ( :clock_start )
+    ( $t :clock_diff = )
+	( *render_julia_sets )
+    ( $t2 :clock_diff = )
+	( $t2 $t - "total rendering time # %.3fs\n" :printf )  
+)

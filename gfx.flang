@@ -1,164 +1,177 @@
 ###
-Graphical library written in flang - language
- language: flang
- author: mystikkogames ( mystikkogames@protonmail.com )
- license: GPLv2
+Graphical programs written in flang - language
+language: flang
+author: mystikkogames ( mystikkogames@protonmail.com )
+license: GPLv2
 ###
 
-( const $$PI 3.14159 )
+( include "utils.flang" )
 
-( function :gfx_render_circle ( $o ) :
-    ( $x $o ".x" -> = )
-    ( $y $o ".y" -> = )
-    ( $radius $o ".radius" -> = )
-    ( $r $o ".r" -> = )
-    ( $g $o ".g" -> = )
-    ( $b $o ".b" -> = )
-    ( $angle 0 = )
-    ( $i 0 = )
-    ( $width *get_width_pixel = )
-    ( $height *get_height_pixel = )
-    ( $r $g $b *set_rgb_pixel )
-    ( loop ( $angle $$PI 2 * <= ) : 
-        ( $x2 $x $angle *cos $radius * + *int = )
-        ( $y2 $y $angle *sin $radius * + *int = )
-        ( if ( $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and ) :
-            ( $x2 $y2 *set_pos_pixel )
-            ( *render_pixel )
-        )
-        ( $angle 0.001 += )
-        ( $i ++ )
-    )
-)
-
-( function :gfx_render_line ( $o ) :
-    ( $x $o ".x" -> = )
-    ( $y $o ".y" -> = )
-    ( $x2 $o ".x2" -> = )
-    ( $y2 $o ".y2" -> = )
-    ( $len $x $x2 - *pow2 $y $y2 - *pow2 + *sqrt = )
-    ( $len *assert )
-    ( $dx $x $x2 - $len / = )
-    ( $dy $y $y2 - $len / = )
-    ( $step 1 $len / = )
-    ( $r $o ".r" -> = )
-    ( $g $o ".g" -> = )
-    ( $b $o ".b" -> = )
-    ( $width *get_width_pixel = )
-    ( $height *get_height_pixel = )
-	( $r $g $b *set_rgb_pixel )
-    ( $i 0 = )
-    ( loop ( $i $len < ) : 
-   		( $x3 $x $dx $i * + = )
-   		( $y3 $y $dy $i * + = )
-        ( if ( $x3 0 >= $x3 $width < and $y3 0 >= $y3 $height < and and ) :
-	   		( $x3 $y3 *set_pos_pixel )
-			( *render_pixel )
+# http://rosettacode.org/wiki/Bitmap/Write_a_PPM_file
+# image: https://imgur.com/lWyqS55
+( function *rosetta_example_renderer ( ) :
+    ( $width 800 = )
+    ( $height 600 = )
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( "rosetta_example_renderer.ppm" *image_set_name )
+    ( *image_reset_data )
+    ( $y 0 = )
+    ( loop ( $y $height < ) :
+    	( $x 0 = ) 
+		( loop ( $x $width < ) :  
+		    ( $x *image_set_x ) 
+		    ( $y *image_set_y ) 
+		    ( $x 256 % *image_set_r )
+		    ( $y 256 % *image_set_g )
+		    ( $x $y * 256 % *image_set_b )
+		    ( $x ++ )		    
 		)
-      	( $i ++ )
-    )
-)
+		( $y ++ )
+	)
+	( *file_write_image )
+) 
 
-( function :gfx_render_fill_rectangle ( $o ) :
-    ( $x $o ".x" -> = )
-    ( $y $o ".y" -> = )
-    ( $w $o ".w" -> = )
-    ( $h $o ".h" -> = )
-    ( $end_x $x $w + = )
-    ( $end_y $y $h + = )
-    #( $radius $o ".radius" -> = )
-    ( $r $o ".r" -> = )
-    ( $g $o ".g" -> = )
-    ( $b $o ".b" -> = )
-    ( $angle 0 = )
-    ( $width *get_width_pixel = )
-    ( $height *get_height_pixel = )
-	( $r $g $b *set_rgb_pixel )
-    ( loop ( $y $end_y < ) : 
-        ( $tx $x = )
-        ( loop ( $tx $end_x < ) : 
-            ( if ( $tx $width < $y $height < and ) :
-	        	( $tx $y *set_pos_pixel )
-	        	( *render_pixel )
-	        )
-            ( $tx ++ )
-        )
-        ( $y ++ )
-    )
-)
+# image: https://imgur.com/6o3GtsS
+( function *random_sin_example_renderer ( ) :
+    ( $width 800 = )
+    ( $height 600 = )
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( "random_sin_example_renderer.ppm" *image_set_name )
+    ( *image_reset_data )
+    ( $cnt 10 20 :random = )
+	( loop ( $cnt 0 > ) :
+		( $color_r 0 255 :random = )
+		( $color_g 0 255 :random = )
+		( $color_b 0 255 :random = )
+    	( $wave 10 255 :random = )
+    	( $y_pos 10 $height :random = )
+    	( $amplitude 10 $height 2 / :random = )
+    	( $i 0 = )
+		( loop ( $i $width < ) :
+			( $x $i = )
+			( $y $x $wave / :sin $amplitude * $y_pos + = )	   
+		    ( $x *image_set_x ) 
+		    ( $y *image_set_y ) 
+			( $color_r *image_set_r )
+			( $color_g *image_set_g )
+			( $color_b *image_set_b )
+			( $i 0.25 += )		    
+		)
+		( $cnt -- )
+	)
+	( *file_write_image )
+) 
 
-( function :gfx_render_fill_circle ( $o ) :
-    ( $x $o ".x" -> = )
-    ( $y $o ".y" -> = )
-    ( $radius $o ".radius" -> = )
-    ( $r $o ".r" -> = )
-    ( $g $o ".g" -> = )
-    ( $b $o ".b" -> = )
-    ( $angle 0 = )
-    ( $width *get_width_pixel = )
-    ( $height *get_height_pixel = )
-    ( $end_x $x $radius + = )
-    ( $end_y $y $radius + = )
-    ( $y2 $y $radius - = )
-	( $r $g $b *set_rgb_pixel )
-    ( loop ( $y2 $end_y < ) : 
-        ( $x2 $x $radius - = )
-        ( loop ( $x2 $end_x < ) : 
-            ( if ( $x2 $x - *pow2 $y2 $y - *pow2 + $radius $radius * < $x2 0 >= $x2 $width < and $y2 0 >= $y2 $height < and and and ) :
-		        ( $x2 $y2 *set_pos_pixel )
-		        ( *render_pixel )
-            )
-            ( $x2 ++ )
-        )
-        ( $y2 ++ )
-    )
-)
-
-( function :gfx_random_color ( $o ) :
-    ( $o ".r" *random 255 * *int <- )
-    ( $o ".g" *random 255 * *int <- )
-    ( $o ".b" *random 255 * *int <- )
-    ( $o )
-)
-
-( function :gfx_smooth ( ) :
-    ( $width *get_width_pixel = )
-    ( $height *get_height_pixel = )
-    ( $n $width $height * = )
-    ( $i $width 1 + = )
-    ( loop ( $i $n < ) : 
-        ( $x $i $width % = )
-        ( $y $i $width / *int = )
-        ( if ( $x 0 == $x $width 1 - == $y 0 == $y $height 1 - == or or or ) : ( $i ++ ) ( continue ) )
-        ( $y2 -1 = )
-        ( $r 0 = )
-        ( $g 0 = )
-        ( $b 0 = )
-        ( loop ( $y2 2 < ) : 
-            ( $x2 -1 = )
-            ( loop ( $x2 2 < ) :
-                ( $x $x2 + $y $y2 + *set_pos_pixel)
-                ( $o *get_color_pixel = )
-                ( if ( $x2 0 == $y2 0 == and ) :                     
-                    ( $r $o ".r" -> 2 * += ) 
-                    ( $g $o ".g" -> 2 * += ) 
-                    ( $b $o ".b" -> 2 * += ) 
-                    else :                     
-                    ( $r $o ".r" -> += ) 
-                    ( $g $o ".g" -> += ) 
-                    ( $b $o ".b" -> += ) 
-                )
-                ( $x2 ++ )
-            ) 
-            ( $y2 ++ )
-        )
-
-        ( $x $y *set_pos_pixel )
-        ( $r 10 /= )
-        ( $g 10 /= )
-        ( $b 10 /= )
-        ( $r $g $b *int *set_rgb_pixel)
-        ( *render_pixel )
+# https://imgur.com/ngPjn7C
+( function *random_lines_renderer ( ) :
+    ( $o ["x": "0", "y": "0", "r": "125", "g": "125", "b": "125", "width": 800, "height": 600] = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )    
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( "random_lines_renderer.ppm" *image_set_name )
+    ( *image_reset_data )
+    ( $cnt 10 110 :random = )
+    ( $i 0 = )
+    ( loop ( $i $cnt < ) :
+        ( $o ".x" 0 $width :random <- ) 
+        ( $o ".y" 0 $height :random <- )
+        ( $o ".x2" 0 $width :random <- ) 
+        ( $o ".y2" 0 $height :random <- )
+        ( $o *gfx_random_color )
+        ( $o *gfx_render_line )
         ( $i ++ )
     )
+	( *file_write_image )
+)
+
+# image: https://imgur.com/t62BYDB
+( function *random_filled_circles_renderer ( ) :
+    ( $o ["x": "0", "y": "0", "radius": "50", "r": "125", "g": "125", "b": "125", "width": 800, "height": 600] = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )    
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( "random_filled_circles_renderer.ppm" *image_set_name )
+    ( *image_reset_data )
+    ( $cnt 10 110 :random = )
+    ( $i 0 = )
+    ( loop ( $i $cnt < ) :
+        ( $o ".x" 0 $width :random <- ) 
+        ( $o ".y" 0 $height :random <- )
+        ( $o ".radius" 10 100 :random <- )
+        ( $o *gfx_random_color )
+        ( $o *gfx_render_filled_circle )
+        ( $i ++ )
+    )
+	( *file_write_image )
+)
+
+# image: https://imgur.com/t62BYDB
+( function *random_circles_renderer ( ) :
+    ( $o ["x": "0", "y": "0", "radius": "50", "r": "125", "g": "125", "b": "125", "width": 800, "height": 600] = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )    
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( "random_circles_renderer.ppm" *image_set_name )
+    ( *image_reset_data )
+    ( $cnt 10 110 :random = )
+    ( $i 0 = )
+    ( loop ( $i $cnt < ) :
+        ( $o ".x" 0 $width :random <- ) 
+        ( $o ".y" 0 $height :random <- )
+        ( $o ".radius" 10 100 :random <- )
+        ( $o *gfx_random_color )
+        ( $o *gfx_render_circle )
+        ( $i ++ )
+    )
+	( *file_write_image )
+)
+
+( function *random_filled_rectangles_renderer ( ) :    
+    ( $o ["x": "0", "y": "0", "radius": "50", "r": "125", "g": "125", "b": "125", "width": 800, "height": 600] = )
+    ( $width $o ".width" -> = )
+    ( $height $o ".height" -> = )    
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( "random_filled_rectangles_renderer.ppm" *image_set_name )
+    ( *image_reset_data )
+    ( $cnt 10 30 :random = )
+    ( $i 0 = )
+    ( loop ( $i $cnt < ) :
+        ( $o ".x" 0 $width :random <- ) 
+        ( $o ".y" 0 $height :random <- )
+        ( $o ".w" 100 $width :random <- ) 
+        ( $o ".h" 100 $height :random <- )
+        ( $o *gfx_random_color )
+        ( $o *gfx_render_filled_rectangle )
+        ( $i ++ )
+    )
+	( *file_write_image )
+)
+
+( function *main ( ) :  
+	
+	( "gfx examples ~~~ flang" :print )
+	
+    ( :clock_start )
+    
+	( *rosetta_example_renderer )   
+    ( *random_circles_renderer ) 	
+ 	( *random_lines_renderer ) 	
+    ( *random_filled_rectangles_renderer )
+    ( *random_filled_circles_renderer )   
+	( *random_sin_example_renderer )     
+	
+	( :clock_diff total rendering time # %.3fs\n" :printf )  
+	
 )

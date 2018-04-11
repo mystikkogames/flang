@@ -1,0 +1,89 @@
+###
+Mandelbrot renderer in flang
+run: ./flang -f 'mandelbrot.flang'
+
+version: 1.0
+language: flang
+author: mystikkogames ( mystikkogames@protonmail.com )
+license: GPLv2
+###
+
+( include "utils.flang" )
+
+( function *mandelbrot_renderer ( ) :	
+    ( $width 800 = )
+    ( $height 600 = )
+	( $move_x -200 200 :random = )
+	( $move_y -200 200 :random = )
+	( $r 0 50 :random = )
+	( $g 0 50 :random = )
+	( $b 0 50 :random = )
+	( $fr 1 1.5 :random = )
+	( $fg 1 1.5 :random = )
+	( $fb 1 1.5 :random = )	
+	( $zoom 0.01 5 :random = )
+	( $loops 100 = )
+	
+    ( *image_init )
+    ( $width *image_set_width )
+    ( $height *image_set_height )
+    ( 1 1000 :random "mandelbrot_renderer%i.ppm" :sprintf *image_set_name )
+    ( *image_reset_data )    
+    ( $i 0 = )
+    
+    ( $escaper ( lambda ( $o ) : 
+        ( $i 0 = $n 0 = $x 0 = $y 0 = ) 
+        ( $im $o ".im" -> = ) 
+        ( $re $o ".re" -> = ) 
+        ( $loops $o ".loops" -> = ) 
+        ( loop ( $x 2 :pow $y 2 :pow + 4 < $i $loops < and ) : 
+            ( $t $x 2 :pow $y 2 :pow - $re + = ) 
+            ( $y $x $y 2 * * $im + = ) 
+            ( $x $t = ) 
+            ( $i ++ ) 
+        ) 
+        ( $i ) 
+    ) = )
+    
+    ( $n $width $height * = ) 
+    ( $o [] = )
+    ( $o ".loops" $loops <- )
+    ( loop ( $i $n < ) : 
+        ( $x $i $width % = )
+        ( $y $i $width / :floor = )
+        ( $re $x $move_x + $width 2.0 / - $zoom * $width / = )
+        ( $im $y $move_y + $height 2.0 / - $zoom * $width / = )
+        ( $o ".im" $im <- )
+        ( $o ".re" $re <- )
+        ( $c $o *$escaper = )     
+	    ( $x *image_set_x ) 
+	    ( $y *image_set_y ) 
+        ( if ( $c $loops < ) :          
+			( $r $c $fr * + *image_set_r )
+			( $g $c $fg * + *image_set_g )
+			( $b $c $fb * + *image_set_b )
+        )
+        ( $i ++ )
+    )
+	( *file_write_image )
+)
+
+( function *render_mandelbrots ( ) :
+	( $i 0 = )
+	( loop ( $i 10 < ) : 
+    	( $t :clock_diff = )
+		( *mandelbrot_renderer )
+		( $t2 :clock_diff = )    
+		( $t2 $t - $i "%i. mandelbrot # %.3fs\n" :printf )  
+		( $i ++ )
+	)	
+)
+ 
+( function *main ( ) :  
+	( "Mandelbrot Renderer ~~~ flang" :print )
+    ( :clock_start )
+    ( $t :clock_diff = )
+	( *render_mandelbrots ) 
+    ( $t2 :clock_diff = )
+	( $t2 $t - "total rendering time # %.3fs\n" :printf )  
+)

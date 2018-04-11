@@ -8,7 +8,7 @@ license: GPLv2
 
 ( include "utils.flang" )
 
-( function :euler_1 ( ) :
+( function *euler_1 ( ) :
     ( $sum 0 = )
     ( $i 1 = )
     ( loop ( $i 1000 < ) :
@@ -20,7 +20,7 @@ license: GPLv2
     ( $sum ) 
 )
 
-( function :euler_2 ( ) : 
+( function *euler_2 ( ) : 
 	( $sum 0 = )
 	( $a 0 = )
 	( $b 1 = )
@@ -36,7 +36,7 @@ license: GPLv2
 	( $sum ) # return here is optional since $sum is pushed to stack anyway
 )
 
-( function :euler_3 ( ) :   
+( function *euler_3 ( ) :   
 	( $bignum 600851475143 = )
     ( $n 2 = )
     ( $biggest_factor 0 = )
@@ -51,7 +51,7 @@ license: GPLv2
 )
 
 
-( function :euler_4 ( ) :   
+( function *euler_4 ( ) :   
 	( $start1 999 = )
 	( $largest 0 = )
     ( loop ( $start1 100 > ) :
@@ -71,7 +71,7 @@ license: GPLv2
 )
 
 
-( function :euler_5 ( ) :   
+( function *euler_5 ( ) :   
 	( $n 0 = )
     # because non-primes are multiples of primes: 18=2*3*3 / 20=2*2*5 ...
     ( $step 2 3 5 7 11 13 17 * * * * * * = ) 
@@ -94,7 +94,7 @@ license: GPLv2
 )
 
 # brute force saves the day!
-( function :euler_6 ( ) :   
+( function *euler_6 ( ) :   
 	( $sum_of_squares 0 = )
 	( $squares_of_sum 0 = )
     ( $i 1 = )
@@ -107,15 +107,13 @@ license: GPLv2
     ( $squares_of_sum $sum_of_squares - ) 
 )
 
-( function :euler_7 ( ) :   	
+( function *euler_7 ( ) :   	
 	( 10000 :prime_nth )
 )
 
-( function :euler_8 ( ) :   
-    ( $f "data.json" :file_read  = )
-    ( $data $f :fobj_compile ".euler_8" -> = ) 
-    ( $str $data :remove_whitespace = )
-    #( "sss" :print = )
+( function *euler_8 ( ) :   
+    ( $data "euler_8.txt" :file_read  = )
+    ( $str $data *remove_whitespace = )
     ( $len $str :strlen = )
     ( $i 0 = )
     ( $maximum 0 = )
@@ -132,7 +130,7 @@ license: GPLv2
 	( $maximum )
 )
 
-( function :euler_9 ( ) :   
+( function *euler_9 ( ) :   
     ( $a 1 = )
     ( loop ( $a 1000 < ) :
         ( $b $a 1 + = )
@@ -151,7 +149,7 @@ license: GPLv2
 )
 
 # in brute force we trust!
-( function :euler_10 ( ) :   
+( function *euler_10 ( ) :   
     ( $i 0 = )
     ( $sum 0 = )
     ( $prime 0 = )
@@ -164,9 +162,9 @@ license: GPLv2
 )
 
 
-( function :euler_11 ( ) :   
-    ( $data "data.json" :file_read :fobj_compile =  ) 
-    ( $str $data ".euler_11" -> :remove_whitespace = )
+( function *euler_11 ( ) :   
+    ( $data "euler_11.txt" :file_read = ) 
+    ( $str $data *remove_whitespace = )
     ( $x 0 = )
     ( $maximum 0 = )
     ( loop ( $x 16 < ) :
@@ -229,7 +227,7 @@ license: GPLv2
 # (2 + 1) * (1 + 1) = 6 components
 # I didn't know this math trick
 # Credits: http://codeforces.com/blog/entry/22317
-( function :euler_12 ( ) :   
+( function *euler_12 ( ) :   
 	( $i 0 = )
 	( loop ( 1 ) :
 		( $sum2 $i $i 1 + * 2 / :floor = )
@@ -259,9 +257,9 @@ license: GPLv2
 )
 
 # Good old brute force in action
-( function :euler_13 ( ) :
-    ( $data "data.json" :file_read :fobj_compile = ) 
-    ( $bigdata $data ".euler_13" -> :remove_whitespace = )
+( function *euler_13 ( ) :
+    ( $data "euler_13.txt" :file_read = ) 
+    ( $bigdata $data *remove_whitespace = )
     ( $x 49 = )
     ( $sum "" = )
     ( $leftover 0 = )
@@ -288,7 +286,7 @@ license: GPLv2
 
 # This is pretty much the most optimum algorithm I came up with.
 # Pretty slow but that's how the cookie crambles
-( function :euler_14 ( ) :
+( function *euler_14 ( ) :
     ( $best_i 0 = )
     ( $largest 0 = )
     ( $i 0 = )
@@ -320,7 +318,7 @@ license: GPLv2
 # Propably useless to use globals here but 
 # you can use it to walk through general size of arrays
 # flang now supports recursive functions!
-( function :euler_15 ( ) :
+( function *euler_15 ( ) :
     ( $luke_the_gridwalker ( lambda ( $a $x $y ) :
 	    ( if ( $x 20 > $y 20 > or ) : 
 		    ( 0 ) 
@@ -345,10 +343,10 @@ license: GPLv2
     ( $i 0 = )
     ( $a [] = )
     ( loop ( $i 1000000 < ) : ( $i ++ ) ( $a 0 :push ) )    
-   	( 0 0 $a :$luke_the_gridwalker )
+   	( 0 0 $a *$luke_the_gridwalker )
 )
 
-( function :euler_16 ( ) :
+( function *euler_16 ( ) :
     ( $multiply_2 ( lambda ( $num ) : 
         ( $len $num :strlen = ) 
         ( $new "" = )
@@ -366,7 +364,7 @@ license: GPLv2
         ( $new )
     ) = )
     ( $num "2" = $i 1 = )    
-    ( loop ( $i 1000 < ) : ( $num $num :$multiply_2 = ) ( $i ++ ) )
+    ( loop ( $i 1000 < ) : ( $num $num *$multiply_2 = ) ( $i ++ ) )
     ( $len $num :strlen = )
     ( $i 0 = )
     ( $sum 0 = )
@@ -374,7 +372,7 @@ license: GPLv2
     ( $sum )
 )
 
-( function :euler_17 ( ) :
+( function *euler_17 ( ) :
     ( $num_words ( lambda ( $n ) : 
         ( if ( $n 1 == ) : ( "one" )  
         elif ( $n 2 == ) : ( "two" )  
@@ -410,7 +408,7 @@ license: GPLv2
         ( $len $n :strlen = ) 
         ( if ( $n :strlen 4 == ) : ( "onethousand" ) ( return ) )
         ( if ( $n :strlen 3 == ) : 
-            ( $tmp $n 0 :at :$num_words = )
+            ( $tmp $n 0 :at *$num_words = )
             ( $res $res $tmp :join "hundred" :join = ) 
             ( $n $n 1 3 :slice = ) 
             ( $n $n :floor = )
@@ -419,23 +417,23 @@ license: GPLv2
         ( $n $n :floor = ) # cleanup because we might have ugly 01 / 06 ...
         ( if ( $n :strlen 2 <= ) :
             ( if ( $n 21 < ) : 
-            ( $res $res $n :$num_words :join = ) 
+            ( $res $res $n *$num_words :join = ) 
                 ( $res ) 
                 ( return ) 
             )
-            ( $tmp $n $n 10 % - :$num_words = )
-            ( $tmp2 $n 10 % :$num_words = )
+            ( $tmp $n $n 10 % - *$num_words = )
+            ( $tmp2 $n 10 % *$num_words = )
             ( $res $tmp :join $tmp2 :join ) 
             ( return )
         )
     ) = )
     ( $i 1 = ) 
     ( $sum 0 = ) 
-    ( loop ( $i 1000 <= ) : ( $sum $num_words $i :$num_to_words :strlen += ) ( $i ++ ) )
+    ( loop ( $i 1000 <= ) : ( $sum $num_words $i *$num_to_words :strlen += ) ( $i ++ ) )
     ( $sum )
 )
 
-( function :euler_18 ( ) :
+( function *euler_18 ( ) :
     ( $luke_the_trianglewalker ( lambda ( $a $x $y ) :
         ( if ( $y 15 >= ) :
             ( 0 )
@@ -466,10 +464,10 @@ license: GPLv2
     ( $i 0 = )
     ( $a [] = )
     ( loop ( $i 1000000 < ) : ( $i ++ ) ( $a 0 :push ) )   
-    ( 0 0 $a :$luke_the_trianglewalker ) 
+    ( 0 0 $a *$luke_the_trianglewalker ) 
 )
 
-( function :euler_19 ( ) :
+( function *euler_19 ( ) :
 	# https://www.timeanddate.com/calendar/months/
 	( $months [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] = )
 	( $start_day -1 = )
@@ -509,7 +507,7 @@ license: GPLv2
 	( $bloody_sundays )			
 )
 
-( function :sum_big_numbers ( $a $b ) :
+( function *sum_big_numbers ( $a $b ) :
 	( $a_len $a :strlen = )
 	( $b_len $b :strlen = )
 	( if ( $b_len $a_len > ) : 
@@ -522,8 +520,8 @@ license: GPLv2
 	( $i 0 = )
 	( $leftover 0 = )
 	( $res "" = )
-	( $a $a :reverse = ) 
-	( $b $b :reverse = ) 
+	( $a $a *reverse = ) 
+	( $b $b *reverse = ) 
     ( loop ( $i $a_len < ) : 
     	( $ca $a $i :at = )
     	( $cb 0 = )
@@ -541,25 +539,25 @@ license: GPLv2
         ( $i ++ )
     )
     ( if ( $leftover 0 > ) : ( $res $res $leftover :join = ) )    
-	( $res :reverse  )    
+	( $res *reverse  )    
 )
 
-( function :multiply_big_numbers ( $v $n ) :
+( function *multiply_big_numbers ( $v $n ) :
 	( $i 0 = )
 	( $res $v = )
     ( loop ( $n 1 > ) : 
     	( $n -- )
-    	( $res $res $v :sum_big_numbers = )
+    	( $res $res $v *sum_big_numbers = )
     )
 	( $res )    
 )
 
-( function :euler_20 ( ) :
+( function *euler_20 ( ) :
 	( $t "1" = )
 	( $i 1 = )
 	( $sum 1 = )
 	( loop ( $i 100 < ) : 		
-		( $t $i $t :multiply_big_numbers = )
+		( $t $i $t *multiply_big_numbers = )
 		( $i ++ )
 	)
 	( $i 0 = )
@@ -570,10 +568,88 @@ license: GPLv2
 		( $i ++ )
 	)
 	( $sum  )
+)
 
+( function *euler_21 ( ) :
+    ( $d ( lambda ( $n ) :
+    	( $sum 0 = )
+    	( $i 1 = )
+		( loop ( $i 2 * $n <= ) :
+			( if ( $n $i % 0 == ) : 
+				( $sum $i += ) 
+			)
+			( $i ++ )
+		)
+	( $sum ) ) = )
+	( $checked [] = )
+	( $i 0 = )
+    ( loop ( $i 100000 < ) : ( $i ++ ) ( $checked 0 :push ) ) 
+	( $i 1 = )
+	( $sum 0 = )
+	( loop ( $i 10000 < ) :
+		( $a $i *$d = )
+		( $b $a *$d = )
+		( if ( $a $b != $b $i == and $checked $a :get ! and ) : 
+			#( $b $a $i "%d --- %d --- %d\n" :printf )
+			#( $checked $a :get "%d\n" :printf )
+			# update hash so the same number isn't included twice! ::: d(b) -> d(a)
+         	( $checked $b 1 :set ) 
+			( if ( $a 10000 < ) : ( $sum $a += ) )
+			( if ( $b 10000 < ) : ( $sum $b += ) )
+		)
+		( $i ++ )
+	)
+	# free resources
+	( $checked :free ) 
+	( $sum )
+)
+
+( function *name_comparator ( $a $b ) : # order as they are entered
+	( $i 0 = )
+	( $len1 $a :strlen = )
+	( $len2 $b :strlen = )
+	( loop ( $i $len1 < ) :
+		( if ( $i $len2 >= ) : ( 0 ) ( return ) )
+		( $na $a $i :at :ord 64 - = )
+		( $nb $b $i :at :ord 64 - = )
+		( if ( $na $nb < ) : ( 1 ) ( return ) )
+		( if ( $na $nb > ) : ( 0 ) ( return ) )
+		( $i ++ )
+	)
+	( if ( $len1 $len2 < ) : ( 1 ) ( return ) )
+	( 0 ) ( return )
 )
     
-( function :euler_32 ( ) :
+( function *name_value ( $str ) :
+	( $sum 0 = )
+	( $i 0 = )
+	( $len $str :strlen = )
+	( loop ( $i $len < ) :
+		( $sum $str $i :at :ord 64 - += )
+		( $i ++ )
+	)
+	( $sum )
+)
+     
+( function *euler_22 ( ) :
+    ( $f "euler_22.txt" :file_read  = )
+   	( $arr "[" $f "]" :join :join :fobj_compile = ) 
+	( ( lambda ( ) : ( *name_comparator ) ) $arr *sort )
+	( $len $arr :len = )
+	( $sum 0 = ) 
+	( $i 0 = ) 
+	( loop ( $i $len < ) : 
+		( $name $arr $i :get = )
+		( $pos $i 1 + = )
+		( $nv $name *name_value = )
+		( $v $nv $pos * = )
+		( $sum $v += )
+    	( $i ++ )
+	)
+	( $sum )
+)
+
+( function *euler_32 ( ) :
     ( $i 0 = )
     ( $a [] = )
     ( loop ( $i 1000000 < ) : ( $i ++ ) ( $a 0 :push ) ) 
@@ -591,7 +667,7 @@ license: GPLv2
             ( $sum $i $j :join $product :join = )
             ( $len $sum :strlen = )
             ( if ( $len 9 > ) : ( break ) )
-            ( if ( $len 9 == $sum :$is_pandigital and $a $product :get ! and ) : 
+            ( if ( $len 9 == $sum *$is_pandigital and $a $product :get ! and ) : 
                 ( $a $product 1 :set ) 
    	            ( $sum_of_products $product += )
             )         
@@ -599,145 +675,142 @@ license: GPLv2
         )
         ( $i ++ )
     )
+	# free resources
+	( $a :free ) 
     ( $sum_of_products  )
 )
 
-( function :euler_unit_tests ( ) :    
+( function *euler_unit_tests ( ) :    
     ( $t :clock_diff = )
-  	( :euler_1 233168 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_1 # %.3fs\n" :printf )  	
+  	( *euler_1 233168 == :assert )
+  	( :clock_diff $t - "euler_1 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
-    ( :euler_2 4613732 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_2 # %.3fs\n" :printf )  	
+    ( *euler_2 4613732 == :assert )
+  	( :clock_diff $t - "euler_2 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_3 6857 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_3 # %.3fs\n" :printf )  	
+    ( *euler_3 6857 == :assert )
+  	( :clock_diff $t - "euler_3 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
-    ( :euler_4 906609 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_4 # %.3fs\n" :printf )  	
+    ( *euler_4 906609 == :assert )
+  	( :clock_diff $t - "euler_4 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
-    ( :euler_5 232792560 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_5 # %.3fs\n" :printf )  	
+    ( *euler_5 232792560 == :assert )
+  	( :clock_diff $t - "euler_5 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
-    ( :euler_6 25164150 == :assert )    
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_6 # %.3fs\n" :printf )  	
+    ( *euler_6 25164150 == :assert )    
+  	( :clock_diff $t - "euler_6 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
-    ( :euler_7 104743 == :assert )    
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_7 # %.3fs\n" :printf )  	
+    ( *euler_7 104743 == :assert )    
+  	( :clock_diff $t - "euler_7 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
-    ( :euler_8 23514624000 == :assert )    
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_8 # %.3fs\n" :printf )  	
+    ( *euler_8 23514624000 == :assert )    
+  	( :clock_diff $t - "euler_8 # %.3fs\n" :printf )  	
     
     ( $t :clock_diff = )
-    ( :euler_9 31875000 == :assert )    
+    ( *euler_9 31875000 == :assert )    
     ( $t2 :clock_diff = )    
   	( $t2 $t - "euler_9 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_10 142913828922 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_10 # %.3fs\n" :printf )  	
+    ( *euler_10 142913828922 == :assert )
+  	( :clock_diff $t - "euler_10 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_11 70600674 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_11 # %.3fs\n" :printf )  	
+    ( *euler_11 70600674 == :assert )
+  	( :clock_diff $t - "euler_11 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_12 76576500 == :assert ) 
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_12 # %.3fs\n" :printf )  	
+    ( *euler_12 76576500 == :assert ) 
+  	( :clock_diff $t - "euler_12 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_13 5537376230 == :assert ) 
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_13 # %.3fs\n" :printf )  	
+    ( *euler_13 5537376230 == :assert ) 
+  	( :clock_diff $t - "euler_13 # %.3fs\n" :printf )  	
+
+	###
+    ( $t :clock_diff = )
+    ( *euler_14 837799 == :assert ) 
+  	( :clock_diff $t - "euler_14 # %.3fs\n" :printf )  
+	###
+	
+    ( $t :clock_diff = )
+    ( *euler_15 137846528820 == :assert )
+  	( :clock_diff $t - "euler_15 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_14 837799 == :assert ) 
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_14 # %.3fs\n" :printf )  
+    ( *euler_16 1366 == :assert )
+  	( :clock_diff $t - "euler_16 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_15 137846528820 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_15 # %.3fs\n" :printf )  	
+    ( *euler_17 21124 == :assert )
+  	( :clock_diff $t - "euler_17 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_16 1366 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_16 # %.3fs\n" :printf )  	
+    ( *euler_18 1074 == :assert )
+  	( :clock_diff $t - "euler_18 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_17 21124 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_17 # %.3fs\n" :printf )  	
+    ( *euler_19 171 == :assert )
+  	( :clock_diff $t - "euler_19 # %.3fs\n" :printf )  	
   	
     ( $t :clock_diff = )
-    ( :euler_18 1074 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_18 # %.3fs\n" :printf )  	
-  	
+    ( *euler_20 648 == :assert )
+  	( :clock_diff $t - "euler_20 # %.3fs\n" :printf )
+  	  
+ 	###
     ( $t :clock_diff = )
-    ( :euler_19 171 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_19 # %.3fs\n" :printf )  	
-  	
-    ( $t :clock_diff = )
-    ( :euler_20 648 == :assert )
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_20 # %.3fs\n" :printf )  	
+    ( *euler_21 31626 == :assert )
+  	( :clock_diff $t - "euler_21 # %.3fs\n" :printf )  	
   	    
     ( $t :clock_diff = )
-    ( :euler_32 45228 == :assert )    
-    ( $t2 :clock_diff = )    
-  	( $t2 $t - "euler_32 # %.3fs\n" :printf )  
+    ( *euler_22 871198282 == :assert )
+  	( :clock_diff $t - "euler_22 # %.3fs\n" :printf )  	
+  	###
+  	    
+    ( $t :clock_diff = )
+    ( *euler_32 45228 == :assert )    
+  	( :clock_diff $t - "euler_32 # %.3fs\n" :printf )  
 )
 
 ###
+Euler Problems ~~~ flang
 euler_1 # 0.003s
-euler_2 # 0.001s
-euler_3 # 0.161s
-euler_4 # 0.033s
-euler_5 # 0.005s
-euler_6 # 0.000s
-euler_7 # 2.877s
-euler_8 # 0.041s
-euler_9 # 0.916s
-euler_10 # 118.027s
-euler_11 # 0.019s
-euler_12 # 4.419s
-euler_13 # 0.079s
-euler_14 # 25.789s
-euler_15 # 1.629s
-euler_16 # 0.773s
-euler_17 # 0.026s
-euler_18 # 1.898s
-euler_19 # 0.186s
-euler_20 # 6.875s
-euler_32 # 2.423s
-euler problems # 166.179s
+euler_2 # 0.000s
+euler_3 # 0.024s
+euler_4 # 0.031s
+euler_5 # 0.004s
+euler_6 # 0.001s
+euler_7 # 0.010s
+euler_8 # 0.037s
+euler_9 # 1.048s
+euler_10 # 0.933s
+euler_11 # 0.015s
+euler_12 # 3.034s
+euler_13 # 0.059s
+euler_14 # 24.012s
+euler_15 # 1.268s
+euler_16 # 0.499s
+euler_17 # 0.016s
+euler_18 # 1.580s
+euler_19 # 0.206s
+euler_20 # 4.698s
+euler_21 # 57.996s
+euler_22 # 58.453s
+euler_32 # 1.568s
+total # 155.497s
 ###
-( function :main ( ) : 
-	# init global primes array for :prime_nth
-    ( $PRIMES [ 2, 3 ] = )    
+
+( function *main ( ) : 
+	( "Euler Problems ~~~ flang" :print )
     ( :clock_start )
-	( :euler_unit_tests ) 
-    ( :clock_diff "euler problems # %.3fs\n" :printf )
+	( *euler_unit_tests ) 
+    ( :clock_diff "total # %.3fs\n" :printf )
 )
 
